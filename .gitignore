@@ -1,3 +1,4 @@
 #.flaskenv
 venv/
 __pycache__/
+app.db
