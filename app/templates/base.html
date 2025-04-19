@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}CashNest{% endblock %}</title>
+
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #ffffff;
+            font-family: 'Courier Prime', monospace;
+            padding: 16px;
+        }
+
+        .navbar-custom {
+            background-color: #31511E;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1rem;
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: white !important;
+            margin-right: 20px;
+        }
+
+        .page-title-inline {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-right: auto;
+        }
+
+        .nav-link {
+            color: white !important;
+            margin-left: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid px-3 d-flex align-items-center">
+            <a class="navbar-brand" href="/">💲CashNest</a>
+            <div class="page-title-inline">{% block page_title %}Page Title{% endblock %}</div>
+
+            <div class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/budget">Savings + Budget</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/expenditure">Expenditure Tracking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/mydata">My Data</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/profile">Settings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><img src="/static/user-icon.png" alt="Profile" style="width: 22px;"></a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container-fluid px-3 py-4">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>
