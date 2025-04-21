@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Projections{% endblock %}
+{% block page_title %}Projections{% endblock %}
+
+{% block content %}
+
+  <h1>Projects Analysis</h1>
+ 
+  <section>
+    <h2>Summary</h2>
+    <p>Total Projects: {{ analysis.total_projects }}</p>
+    <p>Completed Projects: {{ analysis.completed_projects }}</p>
+    <p>Completion Rate: {{ analysis.completion_rate }}%</p>
+  </section>
+ 
+  <section>
+    <h2>Project Details</h2>
+    {% if projects %}
+      <table>
+        <thead>
+          <tr>
+            <th>Project ID</th>
+            <th>Project Name</th>
+            <th>Status</th>
+            <th>Progress (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for project in projects %}
+            <tr>
+              <td>{{ project.id }}</td>
+              <td>{{ project.name }}</td>
+              <td>{{ project.status }}</td>
+              <td>{{ project.progress }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No project data available.</p>
+    {% endif %}
+  </section>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}My Data{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="mb-5">
+      <h2>Monthly Income</h2>
+      <form id="incomeForm" class="row g-2 align-items-end">
+        <div class="col-auto">
+          <label for="income" class="form-label visually-hidden">Income</label>
+          <input name="income" id="income" type="number" placeholder="Enter your income">
+        </div>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+    
+
+    <div>
+        <h2>Transactions</h2>
+
+        <form id="transactionForm" class="row g-2 align-items-end mb-4">
+            <div class="col-md-4">
+                <label for="transaction_in" class="form-label visually-hidden">Transaction</label>
+                <input name="transaction_in" id="transaction_in" type="text" placeholder="Transaction" required>
+            </div>
+            <div class="col-md-4">
+                <label for="cat_in" class="form-label visually-hidden">Category</label>
+                <input name="cat_in" id="cat_in" type="text" placeholder="Category" required>
+            </div>
+            <div class="col-md-3">
+                <label for="amt_in" class="form-label visually-hidden">Amount</label>
+                <input name="amt_in" id="amt_in" type="number" placeholder="$" required>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-success w-100">Add</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Transaction</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionTableBody">
+                <!-- Transactions added dynamically here. -->
+                </tbody>
+            </table>
+      </div>
+    </div>
+</div>
+{% endblock %}
