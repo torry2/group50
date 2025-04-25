@@ -4,8 +4,8 @@ import time
 ENDPOINT = "health"
 
 def health_routes(app, prefix):
-    app.add_url_rule(f'{prefix}/{ENDPOINT}', 'healthcheck', healthcheck, methods=['GET'])
-    app.add_url_rule(f'{prefix}/{ENDPOINT}/ping', 'ping', ping, methods=['GET'])
+    app.add_url_rule(f"{prefix}/{ENDPOINT}", f"{prefix}/{ENDPOINT}", healthcheck, methods=["GET"])
+    app.add_url_rule(f"{prefix}/{ENDPOINT}/ping", f"{prefix}/{ENDPOINT}/ping", ping, methods=["GET"])
 
 def healthcheck():
     return jsonify({"status": "OK"}), 200
