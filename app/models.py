@@ -3,10 +3,11 @@ from typing import Optional
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db
+from flask_login import UserMixin
+from app import db, login
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(200), nullable=False, unique=True)
     password_hash = db.Column(db.String(200), nullable=False)
@@ -19,3 +20,7 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+@login.user_loader
+def load_user(id):
+    return db.session.get(User, int(id))
