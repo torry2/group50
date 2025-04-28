@@ -1,0 +1,36 @@
+body {
+    background-color: #ffffff;
+    font-family: 'Courier Prime', monospace;
+    padding: 16px;
+}
+
+.navbar-custom {
+    background-color: #31511E;
+    font-family: 'Courier Prime', monospace;
+    font-size: 1rem;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.3rem;
+    color: white !important;
+    margin-right: 20px;
+}
+
+.page-title-inline {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-right: auto;
+}
+
+.nav-link {
+    color: white !important;
+    margin-left: 15px;
+}
+
+.user-icon {
+    width: 25px;
+}
