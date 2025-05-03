@@ -1,4 +1,5 @@
 from app import app
+from app.forms import *
 from flask import render_template
 
 
@@ -6,7 +7,8 @@ from flask import render_template
 
 @app.route('/profile')
 def profile():
-    return render_template('profile.html')
+    sf = settingsform()
+    return render_template('profile.html', form=sf)
 
 @app.route('/budget')
 def budget():
