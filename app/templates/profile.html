@@ -10,56 +10,26 @@
         <h3>{{ username }}</h3>
         
         <div id="account-settings">
-            <form id="settings-form">
-                <label for="new-password">Change Password:</label>
-                <input type="password" id="new-password" name="new_password" required>
+            <form method="POST" action="/api/settings" id="settings-form">
+                {{ form.hidden_tag() }}
                 
-                <label for="currency">Select Currency:</label>
-                <select id="currency" name="currency">
-                    <option value="USD">AUD</option>
-                    <option value="EUR">USD</option>
-                </select>
-            
+                <div>
+                    {{ form.new_password.label }}<br>
+                    {{ form.new_password(size=32) }}<br>
+                </div>
+                
+                <div>
+                    {{ form.currency.label }}<br>
+                    {{ form.currency() }}<br>
+                </div>
+                
                 <br>
-                <button type="button" id="save-button">Save</button>
+                {{ form.save() }}
             </form>
         </div>
 
-        <form method="POST" action="/delete-account" style="text-align: right;">
-            <button type="submit" onclick="return confirm('Are you sure you want to delete your account?');">Delete Account</button>
+        <form method="POST" action="/" style="text-align: right;">
+            <button type="submit" onclick="return confirm('this feature does not exist yet');">Delete Account</button>
         </form>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('save-button').addEventListener('click', function() {
-                const newPassword = document.getElementById('new-password').value;
-                const currency = document.getElementById('currency').value;
-
-                const data = {
-                    new_password: newPassword,
-                    currency: currency
-                };
-
-                fetch('/update-settings', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Settings updated successfully!');
-                    } else {
-                        alert('Error updating settings.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error updating settings.');
-                });
-            });
-        });
-    </script>
 {% endblock %}
