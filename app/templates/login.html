@@ -19,19 +19,68 @@
     </div>
     {% endif %}
     {% endwith %}
-    <form method="POST" action="{{ url_for('login') }}">
+
+    <form id="auth-form" method="POST">
       {{ form.hidden_tag() }}
-      
+
       <label>Username</label>
       {{ form.username() }}
-      
+
       <label>Password</label>
       {{ form.password() }}
-    
-      <button type="submit">Login</button>
-      <button type="signup">Signup</button>
+
+      <button type="submit" id="login-button">Login</button>
+      <button type="button" id="signup-button">Signup</button>
     </form>
 
   </div>
 </div>
+
+<script>
+  document.getElementById('auth-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    const actionUrl = '/auth/login'; 
+
+    fetch(actionUrl, {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        window.location.reload(); 
+      } else {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger';
+        alertDiv.innerHTML = `<p>${data.message}</p>`;
+        document.querySelector('.login-box').prepend(alertDiv);
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  });
+
+  document.getElementById('signup-button').addEventListener('click', function() {
+    const formData = new FormData(document.getElementById('auth-form'));
+    const actionUrl = '/auth/register'; 
+
+    fetch(actionUrl, {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        window.location.reload();
+      } else {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger';
+        alertDiv.innerHTML = `<p>${data.message}</p>`;
+        document.querySelector('.login-box').prepend(alertDiv);
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  });
+</script>
 {% endblock %}
