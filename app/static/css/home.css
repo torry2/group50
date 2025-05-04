@@ -1,0 +1,32 @@
+.container-fluid {
+    display: flex;
+    align-items: center;
+}
+
+#home-image-container, .content-section {
+    flex: 1;
+}
+
+#home-image {
+    width: 100%;
+    height: auto;
+}
+
+h1 {
+    font-size: 50px;
+    font-weight: bold;
+    margin-bottom: 70px;
+}
+
+p {
+    font-size: 30px;
+}
+
+button {
+    width: 150px;
+    height: 50px;
+}
+
+.button-container {
+    margin-top: 50px;
+}

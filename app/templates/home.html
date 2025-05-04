@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+{% block page_title %}Home{% endblock %}
+
+{% block css %}
+<link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="flex-container" id="home-image-container">
+        <img src="{{ url_for('static', filename='home-cashnet.jpg') }}" alt="Homepage Icon" id="home-image">
+    </div>
+
+    <div class="content-section">
+        <h1>Welcome to CashNest</h1>
+        <p>Simplify your savings, control your budget and reach your financial goals &mdash; all in one nest.</p>
+        <br>
+        <p>&check; Set your monthly budgets</p>
+        <br>
+        <p>&check; Track your spending and get easy visualisations of cash flow</p>
+        <br>
+        <p>&check; Set and share your saving goals with friends</p>
+        <br>
+        <div class="button-container">
+            <button type="button" class="btn btn-primary btn-dark" onclick="window.location.href='/data'">Get Started</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
