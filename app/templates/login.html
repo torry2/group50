@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+{% block page_title %}My Account{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}"> 
+
+<div class="login-container">
+  <div class="login-box">
+    <h2 class="box-title">Login</h2>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-danger">
+      {% for message in messages %}
+        <p>{{ message }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <form method="POST" action="{{ url_for('login') }}">
+      {{ form.hidden_tag() }}
+      
+      <label>Username</label>
+      {{ form.username() }}
+      
+      <label>Password</label>
+      {{ form.password() }}
+    
+      <button type="submit">Login</button>
+      <button type="signup">Signup</button>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
