@@ -43,7 +43,6 @@ def login():
 
     if user and user.check_password(password):
         login_user(user)
-        print("logged in!")
         return jsonify({"status": "success", "message": "Logged in successfully."}), 200
     else:
         return jsonify({"status": "error", "message": "Invalid username or password."}), 401
