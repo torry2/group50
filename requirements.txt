@@ -4,3 +4,4 @@ flask-sqlalchemy
 flask-migrate
 flask-login
 Flask-WTF
+matplotlib

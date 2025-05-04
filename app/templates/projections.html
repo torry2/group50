@@ -1,45 +1,61 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block title %}Projections{% endblock %}
-{% block page_title %}Expenditure Tracking{% endblock %}
+{% block page_title %}Projections{% endblock %}
 
 {% block content %}
+<div class="container py-4">
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Expenditure</h2>
+      <img src="/api/projections/graph" alt="Projections" class="img-fluid">
+    </div>
+    <div class="col-md-6">
+      <h2>Habits</h2>
+      <form id="projectionsForm" method="POST">
+        {{ form.hidden_tag() }}
+        <div class="col-auto">
+          {{ form.submit(class="btn btn-dark", label="Get Projections") }}
+        </div>
+      </form>
 
-  <h1>Projects Analysis</h1>
- 
-  <section>
-    <h2>Summary</h2>
-    <p>Total Projects: {{ analysis.total_projects }}</p>
-    <p>Completed Projects: {{ analysis.completed_projects }}</p>
-    <p>Completion Rate: {{ analysis.completion_rate }}%</p>
-  </section>
- 
-  <section>
-    <h2>Project Details</h2>
-    {% if projects %}
-      <table>
-        <thead>
-          <tr>
-            <th>Project ID</th>
-            <th>Project Name</th>
-            <th>Status</th>
-            <th>Progress (%)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for project in projects %}
-            <tr>
-              <td>{{ project.id }}</td>
-              <td>{{ project.name }}</td>
-              <td>{{ project.status }}</td>
-              <td>{{ project.progress }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <p>No project data available.</p>
-    {% endif %}
-  </section>
+      <div id="projectionsNotification" style="margin-top: 20px;">
+        <!-- Notification messages will be displayed here. -->
+      </div>
 
+      <div id="projectionsData" style="margin-top: 20px;">
+        <!-- Projections data will be displayed here. -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('projectionsForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const queryString = new URLSearchParams(formData).toString();
+
+    fetch("{{ url_for('projections') }}?" + queryString, {
+      method: "GET"
+    })
+    .then(response => response.json())
+    .then(data => {
+      const notification = document.getElementById('projectionsNotification');
+      notification.innerHTML = "";
+
+      const alertDiv = document.createElement('div');
+      if (data.status === "success") {
+        alertDiv.className = "alert alert-success";
+        document.getElementById('projectionsData').innerHTML = JSON.stringify(data.projections);
+      } else {
+        alertDiv.className = "alert alert-danger";
+      }
+      alertDiv.innerHTML = data.message;
+      notification.appendChild(alertDiv);
+    })
+    .catch(error => console.error('Error:', error));
+  });
+</script>
 {% endblock %}

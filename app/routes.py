@@ -33,19 +33,8 @@ def data():
 @app.route('/projections')
 @login_required
 def projections():
-    analysis = {
-        'total_projects': 10,
-        'completed_projects': 7,
-        'completion_rate': 70
-    }
-
-    projects = [
-        {'id': 1, 'name': 'Project Alpha', 'status': 'Completed', 'progress': 100},
-        {'id': 2, 'name': 'Project Beta', 'status': 'Ongoing', 'progress': 60},
-        # add more if needed
-    ]
-
-    return render_template('projections.html', analysis=analysis, projects=projects)
+    pf = ProjectionsForm()
+    return render_template('projections.html', form=pf)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login(): 
