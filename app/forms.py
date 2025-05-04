@@ -8,3 +8,7 @@ class settingsform(FlaskForm):
     currency = SelectField('Select Currency', choices=[('AUD', 'AUD'), ('USD', 'USD')], validators=[DataRequired()])
     save = SubmitField('Save')
     delete = SubmitField('Delete Account')
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])

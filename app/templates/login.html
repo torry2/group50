@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+{% block page_title %}My Account{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}"> 
+
+<div class="login-container">
+  <div class="login-box">
+    <h2 class="box-title">Login</h2>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-danger">
+      {% for message in messages %}
+        <p>{{ message }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <form id="auth-form" method="POST">
+      {{ form.hidden_tag() }}
+
+      <label>Username</label>
+      {{ form.username() }}
+
+      <label>Password</label>
+      {{ form.password() }}
+
+      <button type="submit" id="login-button">Login</button>
+      <button type="button" id="signup-button">Signup</button>
+    </form>
+
+  </div>
+</div>
+
+<script>
+  document.getElementById('auth-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    const actionUrl = '/auth/login'; 
+
+    fetch(actionUrl, {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        window.location.reload(); 
+      } else {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger';
+        alertDiv.innerHTML = `<p>${data.message}</p>`;
+        document.querySelector('.login-box').prepend(alertDiv);
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  });
+
+  document.getElementById('signup-button').addEventListener('click', function() {
+    const formData = new FormData(document.getElementById('auth-form'));
+    const actionUrl = '/auth/register'; 
+
+    fetch(actionUrl, {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        window.location.reload();
+      } else {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger';
+        alertDiv.innerHTML = `<p>${data.message}</p>`;
+        document.querySelector('.login-box').prepend(alertDiv);
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  });
+</script>
+{% endblock %}

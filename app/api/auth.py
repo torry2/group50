@@ -1,8 +1,11 @@
 from flask import jsonify, request, redirect
+from flask import flash
 from flask_login import current_user, login_user, logout_user
 import sqlalchemy as sa
 from app import db
 from app.models import User
+from app.forms import *
+
 
 ENDPOINT = "auth"
 
@@ -11,7 +14,7 @@ def auth_routes(app, prefix):
     app.add_url_rule(f"{prefix}/{ENDPOINT}/register", f"{prefix}/{ENDPOINT}/register", register, methods=["POST"])
     app.add_url_rule(f"{prefix}/{ENDPOINT}/update", f"{prefix}/{ENDPOINT}/update", update, methods=["POST"])
     app.add_url_rule(f"{prefix}/{ENDPOINT}/logout", f"{prefix}/{ENDPOINT}/logout", logout, methods=["GET"])
-    
+
     app.add_url_rule(f"{prefix}/{ENDPOINT}", f"{prefix}/{ENDPOINT}", auth, methods=["GET"])
 
 #@login_required # example for other pages, uses "views"
@@ -20,8 +23,6 @@ def auth():
         return jsonify({"id": current_user.id}), 200
     return jsonify({"status": "error", "message": "No user is currently logged in."}), 401
 
-    return jsonify({"id": current_user.id}), 200
-    
 def login():
     if request.method != "POST":
         return jsonify({"status": "error", "message": "Method not allowed."}), 405
@@ -37,9 +38,9 @@ def login():
             password = form.password.data
         else:
             return jsonify({"status": "error", "message": "Invalid form data."}), 400
-    
+
     user = User.query.filter_by(username=username).first()
-        
+
     if user and user.check_password(password):
         login_user(user)
         return jsonify({"status": "success", "message": "Logged in successfully."}), 200
@@ -49,13 +50,13 @@ def login():
 def register():
     if request.method != "POST":
         return jsonify({"status": "error", "message": "Method not allowed."}), 405
-    
+
     if request.is_json:
         data = request.get_json()
         username = data.get("username")
         password = data.get("password")
     else: 
-        form = RegisterForm(request.form)
+        form = LoginForm()
         if form.validate_on_submit():
             username = form.username.data
             password = form.password.data
@@ -76,7 +77,7 @@ def register():
 def update():
     if request.method != "POST":
         return jsonify({"status": "error", "message": "Method not allowed."}), 405
-    
+
     if not current_user.is_authenticated:
         return jsonify({"status": "error", "message": "User not authenticated."}), 401
 
@@ -110,3 +111,4 @@ def logout():
         logout_user()
         return jsonify({"status": "success", "message": "Logged out successfully."}), 200
     return jsonify({"status": "error", "message": "No user is currently logged in."}), 401
+ 
