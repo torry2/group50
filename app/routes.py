@@ -9,7 +9,6 @@ from app import login
 def unauthorized():
     return redirect(url_for('login'))
 
-
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -25,10 +24,11 @@ def profile():
 def budget():
     return render_template('budget.html')
 
-@app.route('/data')
+@app.route('/data', methods=['GET', 'POST'])
 @login_required
 def data():
-    return render_template('data.html')
+    form = TransactionForm()
+    return render_template('data.html', form=form)
 
 @app.route('/projections')
 @login_required

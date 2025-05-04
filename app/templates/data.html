@@ -5,56 +5,87 @@
 
 {% block content %}
 <div class="container py-4">
-    <div class="mb-5">
-      <h2>Monthly Income</h2>
-      <form id="incomeForm" class="row g-2 align-items-end">
-        <div class="col-auto">
-          <label for="income" class="form-label visually-hidden">Income</label>
-          <input name="income" id="income" type="number" placeholder="Enter your income">
-        </div>
-        <div class="col-auto">
-          <button type="submit" class="btn btn-primary">Save</button>
-        </div>
-      </form>
-    </div>
-    
+  <div class="mb-5">
+    <h2>Monthly Income</h2>
 
-    <div>
-        <h2>Transactions</h2>
-
-        <form id="transactionForm" class="row g-2 align-items-end mb-4">
-            <div class="col-md-4">
-                <label for="transaction_in" class="form-label visually-hidden">Transaction</label>
-                <input name="transaction_in" id="transaction_in" type="text" placeholder="Transaction" required>
-            </div>
-            <div class="col-md-4">
-                <label for="cat_in" class="form-label visually-hidden">Category</label>
-                <input name="cat_in" id="cat_in" type="text" placeholder="Category" required>
-            </div>
-            <div class="col-md-3">
-                <label for="amt_in" class="form-label visually-hidden">Amount</label>
-                <input name="amt_in" id="amt_in" type="number" placeholder="$" required>
-            </div>
-            <div class="col-md-1">
-                <button type="submit" class="btn btn-success w-100">Add</button>
-            </div>
-        </form>
-
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead class="table-light">
-                    <tr>
-                        <th>Transaction</th>
-                        <th>Category</th>
-                        <th>Amount</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="transactionTableBody">
-                <!-- Transactions added dynamically here. -->
-                </tbody>
-            </table>
+    <form id="incomeForm" class="row g-2 align-items-end">
+      <div class="col-auto">
+        <label for="income" class="form-label visually-hidden">Income</label>
+        <input name="income" id="income" type="number" placeholder="Enter your income">
       </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-dark">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <div>
+    <h2>Transactions</h2>
+
+    <form id="transactionForm" method="POST" class="row g-2 align-items-end">
+      {{ form.hidden_tag() }}
+
+      <div class="col-auto">
+      {{ form.name(class="form-control", placeholder="Transaction Name") }}
+      </div>
+      <div class="col-auto">
+      {{ form.category(class="btn btn-outline-dark dropdown-toggle") }}
+      </div>
+      <div class="col-auto">
+      {{ form.amount(class="form-control", placeholder="Amount") }}
+      </div>
+      <div class="col-auto">
+      {{ form.submit(class="btn btn-dark") }}
+      </div>
+    </form>
+
+    <div id="notification" style="margin-top: 20px;">
+      <!-- Notification messages will be displayed here. -->
     </div>
+
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="table-light">
+          <tr>
+            <th>Transaction</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="transactionTableBody">
+          <!-- Transactions added dynamically here. -->
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
+
+<script>
+  document.getElementById('transactionForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+
+    fetch("{{ url_for('add') }}", {
+      method: "POST",
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      const notification = document.getElementById('notification');
+      notification.innerHTML = "";
+
+      const alertDiv = document.createElement('div');
+      if (data.status === "success") {
+        alertDiv.className = "alert alert-success";
+      } else {
+        alertDiv.className = "alert alert-danger";
+      }
+      alertDiv.innerHTML = data.message;
+      notification.appendChild(alertDiv);
+    })
+    .catch(error => console.error('Error:', error));
+  });
+</script>
 {% endblock %}
