@@ -19,3 +19,6 @@ class TransactionForm(FlaskForm):
     category = SelectField('Category', choices=[('Food', 'Food'), ('Rent', 'Rent'), ('Utilities', 'Utilities'), ('Shopping', 'Shopping'), ('Entertainment', 'Entertainment'), ('Other', 'Other'), ('Goal1', 'Goal1'), ('Goal2', 'Goal2'), ('Goal3', 'Goal3')], validators=[DataRequired()])
     amount = DecimalField('Amount', places=2, rounding=None, validators=[InputRequired(), NumberRange(min=Decimal('0.00'))])
     submit = SubmitField('Add')
+
+class ProjectionsForm(FlaskForm):
+    submit = SubmitField('Get Projections')
