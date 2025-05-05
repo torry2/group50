@@ -8,6 +8,8 @@ ENDPOINT = "data"
 
 def data_routes(app, prefix):
     app.add_url_rule(f"{prefix}/{ENDPOINT}/add", "add", add_transaction, methods=["POST"])
+    app.add_url_rule(f"{prefix}/{ENDPOINT}/get", "get", get_transactions, methods=["GET"])
+    app.add_url_rule(f"{prefix}/{ENDPOINT}/delete/<int:transaction_id>", "delete", delete_transaction, methods=["DELETE"])
     
 def add_transaction():
     if request.method != "POST":
@@ -28,3 +30,26 @@ def add_transaction():
     db.session.commit()
 
     return jsonify({"status": "success", "message": "Transaction added."}), 201
+
+def get_transactions():
+    if request.method != "GET":
+        return jsonify({"status":"error","message":"Method not allowed."}), 405
+
+    transaction_list = []
+    transactions = Transactions.query.filter_by(userid=current_user.id).all()
+    for transaction in transactions:
+        transaction_list.append({"id": transaction.id, "name": transaction.name, "category": transaction.category, "amount": transaction.amount})
+
+    return jsonify({"status": "success", "transactions": transaction_list}), 200
+
+def delete_transaction(transaction_id):
+    if request.method != "DELETE":
+        return jsonify({"status":"error","message":"Method not allowed."}), 405
+
+    transaction = Transactions.query.filter_by(id=transaction_id, userid=current_user.id).first()
+    if not transaction:
+        return jsonify({"status": "error", "message": "Transaction not found."}), 404
+    
+    db.session.delete(transaction)
+    db.session.commit()
+    return jsonify({"status": "success", "message": "Transaction deleted."}), 200
