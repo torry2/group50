@@ -24,7 +24,7 @@ def profile():
 def budget():
     return render_template('budget.html')
 
-@app.route('/data', methods=['GET', 'POST'])
+@app.route('/data', methods=['GET', 'POST', 'DELETE'])
 @login_required
 def data():
     form = TransactionForm()

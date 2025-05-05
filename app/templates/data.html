@@ -47,7 +47,7 @@
       <table class="table table-striped">
         <thead class="table-light">
           <tr>
-            <th>Transaction</th>
+            <th>Transaction Name</th>
             <th>Category</th>
             <th>Amount</th>
             <th>Action</th>
@@ -62,6 +62,54 @@
 </div>
 
 <script>
+  function refreshTransactions() {
+    fetch("{{ url_for('get') }}", {
+    method: "GET",
+    credentials: "include"
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === "success") {
+        const tableBody = document.getElementById('transactionTableBody');
+        tableBody.innerHTML = "";
+        data.transactions.forEach(transaction => {
+          const tableRow = document.createElement('tr');
+          tableRow.innerHTML = `<td>${transaction.name}</td> <td>${transaction.category}</td> <td>${transaction.amount}</td> <td><button class="btn btn-dark btn-delete" data-id="${transaction.id}">Delete</button></td>`;
+          tableBody.appendChild(tableRow);
+        });
+        deleteTransaction();
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  }
+
+  function deleteTransaction() {
+    document.querySelectorAll('.btn-delete').forEach(button => {
+      button.addEventListener('click', function() {
+        const transactionId = this.getAttribute('data-id');
+        fetch("{{ url_for('delete', transaction_id=0) }}".replace('0', transactionId), {
+          method: "DELETE",
+          credentials: "include"
+        })
+        .then(response => response.json())
+        .then(data => {
+          const notification = document.getElementById('notification');
+          notification.innerHTML = "";
+          const alertDiv = document.createElement('div');
+          if (data.status === "success") {
+            alertDiv.className = "alert alert-success";
+            refreshTransactions();
+          } else {
+            alertDiv.className = "alert alert-danger";
+          }
+          alertDiv.innerHTML = data.message;
+          notification.appendChild(alertDiv);
+        })
+        .catch(error => console.error('Error:', error));
+      });
+    });
+  }
+      
   document.getElementById('transactionForm').addEventListener('submit', function(event) {
     event.preventDefault();
     const form = event.target;
@@ -79,6 +127,7 @@
       const alertDiv = document.createElement('div');
       if (data.status === "success") {
         alertDiv.className = "alert alert-success";
+        refreshTransactions();
       } else {
         alertDiv.className = "alert alert-danger";
       }
@@ -87,5 +136,7 @@
     })
     .catch(error => console.error('Error:', error));
   });
+
+  refreshTransactions();
 </script>
 {% endblock %}
