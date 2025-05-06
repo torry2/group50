@@ -21,7 +21,7 @@ class TransactionForm(FlaskForm):
     submit = SubmitField('Add')
 
 class ProjectionsForm(FlaskForm):
-    submit = SubmitField('Get Projections')
+    submit = SubmitField('Analyse')
 
 class IncomeBudgetForm(FlaskForm):
     income = DecimalField('Income', places=2, rounding=None, validators=[InputRequired(), NumberRange(min=Decimal('0.00'))])

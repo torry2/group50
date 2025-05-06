@@ -12,10 +12,10 @@ ENDPOINT = "projections"
 def projections_routes(app, prefix):
     app.add_url_rule(f"{prefix}/{ENDPOINT}", "{prefix}/{ENDPOINT}", projections, methods=["GET"])
     app.add_url_rule(f"{prefix}/{ENDPOINT}/graph", "graph", graph, methods=["GET"])
+    app.add_url_rule(f"{prefix}/{ENDPOINT}/habits", "habits", habits, methods=["GET"])
     
 def projections():
     return jsonify({"status": "projections"}), 200
-
 
 def graph_error(message):
     plt.figure(figsize=(6, 4)) 
@@ -104,3 +104,45 @@ def graph():
     except Exception as e:
         return graph_error(f"Exception: {e}")
     return send_file(img, mimetype='image/png')
+
+def habits():
+    if request.method != "GET":
+        return jsonify({"status":"error","message":"Method not allowed."}), 405
+    try:
+        userid = current_user.id
+        transactions = Transactions.query.filter_by(userid=userid).all()
+        financials = Financials.query.filter_by(userid=userid).first()
+    except Exception:
+        return jsonify({"status":"error","message":"Failed to Get User Data"}), 400
+    
+    if not transactions:
+        return jsonify({"status": "error","message":"No Transactions"}), 400
+    
+    nothabits = {"rent", "goal1", "goal2", "goal3", "utilities"}
+    purchases = set()
+    habits = {}
+
+    for transaction in transactions:
+        item = (transaction.category, transaction.amount)
+        
+        if transaction.category.lower() in nothabits:
+            continue 
+
+        if item in purchases:
+            if item in habits:
+                habits[item] += 1
+            else:
+                habits[item] = 1
+        else:
+            purchases.add(item)
+
+    if habits:
+        total = 0
+        message = []
+        for (category, amount), count in habits.items():
+            total += amount * count
+            message.append(f"{category}: {amount} (x{count})\n")
+
+        return jsonify({"status": "success", "message": f"Additional Cost: ${total}", "projections": message}), 200
+
+    return jsonify({"status": "success", "message": "Additional Cost: $0", "projections":"No Habits Identified"}), 200
