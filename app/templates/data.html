@@ -6,64 +6,195 @@
 {% block content %}
 <div class="container py-4">
   <div class="mb-5">
-    <h2>Monthly Income</h2>
+    <div>
+      <div>
+        <h2>Income & Budgets</h2>
+      </div>
+    
+      <div id="notificationBudget">
+        <!-- Notification messages will be displayed here. -->
+      </div>
+    
+      <div>
+        <form id="incomeBudgetForm" method="POST">
+            {{ inc_budget_form.hidden_tag() }}
+            
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                {{ inc_budget_form.income.label(class="form-label") }}
+                {{ inc_budget_form.income(class="form-control") }}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                {{ inc_budget_form.currency.label(class="form-label d-block") }}
+                {{ inc_budget_form.currency(class="btn btn-outline-dark dropdown-toggle") }}
+              </div>
+            </div>
+          </div>
 
-    <form id="incomeForm" class="row g-2 align-items-end">
-      <div class="col-auto">
-        <label for="income" class="form-label visually-hidden">Income</label>
-        <input name="income" id="income" type="number" placeholder="Enter your income">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="mb-3">
+                {{ inc_budget_form.food_budget.label(class="form-label") }}
+                {{ inc_budget_form.food_budget(class="form-control") }}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                {{ inc_budget_form.rent_budget.label(class="form-label") }}
+                {{ inc_budget_form.rent_budget(class="form-control") }}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                {{ inc_budget_form.utilities_budget.label(class="form-label") }}
+                {{ inc_budget_form.utilities_budget(class="form-control") }}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                {{ inc_budget_form.shopping_budget.label(class="form-label") }}
+                {{ inc_budget_form.shopping_budget(class="form-control") }}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                {{ inc_budget_form.entertainment_budget.label(class="form-label") }}
+                {{ inc_budget_form.entertainment_budget(class="form-control") }}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                {{ inc_budget_form.other_budget.label(class="form-label") }}
+                {{ inc_budget_form.other_budget(class="form-control") }}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                {{ inc_budget_form.goal1_budget.label(class="form-label") }}
+                {{ inc_budget_form.goal1_budget(class="form-control") }}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                {{ inc_budget_form.goal2_budget.label(class="form-label") }}
+                {{ inc_budget_form.goal2_budget(class="form-control") }}
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                {{ inc_budget_form.goal3_budget.label(class="form-label") }}
+                {{ inc_budget_form.goal3_budget(class="form-control") }}
+              </div>
+            </div>
+            <div class="col-12">
+              <div>
+                {{ inc_budget_form.submit(class="btn btn-dark") }}
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
-      <div class="col-auto">
-        <button type="submit" class="btn btn-dark">Save</button>
-      </div>
-    </form>
-  </div>
-
-  <div>
-    <h2>Transactions</h2>
-
-    <form id="transactionForm" method="POST" class="row g-2 align-items-end">
-      {{ form.hidden_tag() }}
-
-      <div class="col-auto">
-      {{ form.name(class="form-control", placeholder="Transaction Name") }}
-      </div>
-      <div class="col-auto">
-      {{ form.category(class="btn btn-outline-dark dropdown-toggle") }}
-      </div>
-      <div class="col-auto">
-      {{ form.amount(class="form-control", placeholder="Amount") }}
-      </div>
-      <div class="col-auto">
-      {{ form.submit(class="btn btn-dark") }}
-      </div>
-    </form>
-
-    <div id="notification" style="margin-top: 20px;">
-      <!-- Notification messages will be displayed here. -->
     </div>
-
-    <div class="table-responsive">
-      <table class="table table-striped">
-        <thead class="table-light">
-          <tr>
-            <th>Transaction Name</th>
-            <th>Category</th>
-            <th>Amount</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="transactionTableBody">
-          <!-- Transactions added dynamically here. -->
-        </tbody>
-      </table>
+    
+    <div style="margin-top: 20px;">
+      <h2>Transactions</h2>
+    
+      <form id="transactionForm" method="POST" class="row g-2 align-items-end">
+        {{ transaction_form.hidden_tag() }}
+    
+        <div class="col-auto">
+          {{ transaction_form.name(class="form-control", placeholder="Transaction Name") }}
+        </div>
+        <div class="col-auto">
+          {{ transaction_form.category(class="btn btn-outline-dark dropdown-toggle") }}
+        </div>
+        <div class="col-auto">
+          {{ transaction_form.amount(class="form-control", placeholder="Amount") }}
+        </div>
+        <div class="col-auto">
+          {{ transaction_form.submit(class="btn btn-dark") }}
+        </div>
+      </form>
+    
+      <div id="notificationTransaction" style="margin-top: 20px;">
+        <!-- Notification messages will be displayed here. -->
+      </div>
+    
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead class="table-light">
+            <tr>
+              <th>Transaction Name</th>
+              <th>Category</th>
+              <th>Amount</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="transactionTableBody">
+            <!-- Transactions added dynamically here. -->
+          </tbody>
+        </table>
+      </div>
     </div>
+    
   </div>
-</div>
 
 <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    fetch("{{ url_for('get-income-budget') }}", {
+        method: "GET",
+        credentials: "include"
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === "success") {
+            const budget = data.income_budget;
+            document.querySelector("#incomeBudgetForm input[name='income']").value = budget.income;
+            document.querySelector("#incomeBudgetForm select[name='currency']").value = budget.currency;
+            document.querySelector("#incomeBudgetForm input[name='food_budget']").value = budget.food;
+            document.querySelector("#incomeBudgetForm input[name='rent_budget']").value = budget.rent;
+            document.querySelector("#incomeBudgetForm input[name='utilities_budget']").value = budget.utilities;
+            document.querySelector("#incomeBudgetForm input[name='shopping_budget']").value = budget.shopping;
+            document.querySelector("#incomeBudgetForm input[name='entertainment_budget']").value = budget.entertainment;
+            document.querySelector("#incomeBudgetForm input[name='other_budget']").value = budget.other;
+            document.querySelector("#incomeBudgetForm input[name='goal1_budget']").value = budget.goal1;
+            document.querySelector("#incomeBudgetForm input[name='goal2_budget']").value = budget.goal2;
+            document.querySelector("#incomeBudgetForm input[name='goal3_budget']").value = budget.goal3;
+        }
+    })
+    .catch(error => console.error("Error fetching budget:", error));
+  });
+
+  document.getElementById('incomeBudgetForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+
+    fetch("{{ url_for('set-income-budget') }}", {
+      method: "POST",
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      const notification = document.getElementById('notificationBudget');
+      notification.innerHTML = "";
+
+      const alertDiv = document.createElement('div');
+      if (data.status === "success") {
+        alertDiv.className = "alert alert-success";
+      } else {
+        alertDiv.className = "alert alert-danger";
+      }
+      alertDiv.innerHTML = data.message;
+      notification.appendChild(alertDiv);
+    });
+  });
+
   function refreshTransactions() {
-    fetch("{{ url_for('get') }}", {
+    fetch("{{ url_for('get-transactions') }}", {
     method: "GET",
     credentials: "include"
     })
@@ -87,13 +218,13 @@
     document.querySelectorAll('.btn-delete').forEach(button => {
       button.addEventListener('click', function() {
         const transactionId = this.getAttribute('data-id');
-        fetch("{{ url_for('delete', transaction_id=0) }}".replace('0', transactionId), {
+        fetch("{{ url_for('delete-transaction', transaction_id=0) }}".replace('0', transactionId), {
           method: "DELETE",
           credentials: "include"
         })
         .then(response => response.json())
         .then(data => {
-          const notification = document.getElementById('notification');
+          const notification = document.getElementById('notificationTransaction');
           notification.innerHTML = "";
           const alertDiv = document.createElement('div');
           if (data.status === "success") {
@@ -115,13 +246,13 @@
     const form = event.target;
     const formData = new FormData(form);
 
-    fetch("{{ url_for('add') }}", {
+    fetch("{{ url_for('add-transaction') }}", {
       method: "POST",
       body: formData
     })
     .then(response => response.json())
     .then(data => {
-      const notification = document.getElementById('notification');
+      const notification = document.getElementById('notificationTransaction');
       notification.innerHTML = "";
 
       const alertDiv = document.createElement('div');

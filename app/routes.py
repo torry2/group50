@@ -27,8 +27,9 @@ def budget():
 @app.route('/data', methods=['GET', 'POST', 'DELETE'])
 @login_required
 def data():
-    form = TransactionForm()
-    return render_template('data.html', form=form)
+    transaction_form = TransactionForm()
+    inc_budget_form = IncomeBudgetForm()
+    return render_template('data.html', transaction_form=transaction_form, inc_budget_form=inc_budget_form)
 
 @app.route('/projections')
 @login_required
