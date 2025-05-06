@@ -37,7 +37,7 @@
     const formData = new FormData(form);
     const queryString = new URLSearchParams(formData).toString();
 
-    fetch("{{ url_for('projections') }}?" + queryString, {
+    fetch("{{ url_for('habits') }}?" + queryString, {
       method: "GET"
     })
     .then(response => response.json())

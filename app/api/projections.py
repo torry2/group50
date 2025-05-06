@@ -12,10 +12,10 @@ ENDPOINT = "projections"
 def projections_routes(app, prefix):
     app.add_url_rule(f"{prefix}/{ENDPOINT}", "{prefix}/{ENDPOINT}", projections, methods=["GET"])
     app.add_url_rule(f"{prefix}/{ENDPOINT}/graph", "graph", graph, methods=["GET"])
+    app.add_url_rule(f"{prefix}/{ENDPOINT}/habits", "habits", habits, methods=["GET"])
     
 def projections():
     return jsonify({"status": "projections"}), 200
-
 
 def graph_error(message):
     plt.figure(figsize=(6, 4)) 
@@ -104,3 +104,40 @@ def graph():
     except Exception as e:
         return graph_error(f"Exception: {e}")
     return send_file(img, mimetype='image/png')
+
+def habits():
+    if request.method != "GET":
+        return jsonify({"status":"error","message":"Method not allowed."}), 405
+    try:
+        userid = current_user.id
+        transactions = Transactions.query.filter_by(userid=userid).all()
+        financials = Financials.query.filter_by(userid=userid).first()
+    except Exception:
+        return jsonify({"status":"error","message":"Failed to Get User Data"}), 400
+    
+
+    # habit: recurring transaction, xyz over budget amounts - monthly income?
+    if not transactions:
+        return jsonify({"status": "error","message":"No Transactions"})
+    
+    habits = []
+    not_habits = {}
+
+    for transaction in transactions:
+        category = transaction.category
+        amount = transaction.amount if transaction.amount is not None else 0
+        key = (category, amount)
+    if key in not_habits:
+        habits.append(transaction)
+    else:
+        not_habits[key] = transaction
+    
+    for trans in repeated_transactions:
+        print(f"Repeated Transaction - Category: {trans.category}, Amount: {trans.amount}")
+    
+
+    return jsonify({
+        "status": "success",
+        "message": "notification",
+        "projections": "data"
+    }), 200
