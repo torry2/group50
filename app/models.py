@@ -52,6 +52,7 @@ class Financials(db.Model):
     other = db.Column(db.Numeric(10, 2))
     goal1 = db.Column(db.Numeric(10, 2))
     goal2 = db.Column(db.Numeric(10, 2))
+    goal3 = db.Column(db.Numeric(10, 2))
 
     def __repr__(self):
         return f"<Financials {self.id} – {self.userid})>"
