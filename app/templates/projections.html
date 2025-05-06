@@ -17,13 +17,16 @@
         <div class="col-auto">
           {{ form.submit(class="btn btn-dark", label="Get Projections") }}
         </div>
+        <div id="habitsNote" style="margin-top: 10px; font-style: italic;">
+          <p>Habits identify when a transaction is made more than once; Totalling the extra spent (duplicate = same price+category)</p>
+        </div>
       </form>
 
       <div id="projectionsNotification" style="margin-top: 20px;">
         <!-- Notification messages will be displayed here. -->
       </div>
 
-      <div id="projectionsData" style="margin-top: 20px;">
+      <div id="projectionsData" style="margin-top: 20px; min-height: 100px;">
         <!-- Projections data will be displayed here. -->
       </div>
     </div>
@@ -48,7 +51,21 @@
       const alertDiv = document.createElement('div');
       if (data.status === "success") {
         alertDiv.className = "alert alert-success";
-        document.getElementById('projectionsData').innerHTML = JSON.stringify(data.projections);
+        
+        const projectionsData = data.projections; 
+        let formattedData = "<ul>";
+        
+        if (typeof projectionsData === 'object' && projectionsData !== null) {
+          for (const [category, amount] of Object.entries(projectionsData)) {
+            formattedData += `<li>${category}: ${amount}</li>`;
+          }
+        } else { // probably an xss somewhere here lol
+          formattedData = `<li>${projectionsData}</li>`;
+        }
+        
+        formattedData += "</ul>";
+        
+        document.getElementById('projectionsData').innerHTML = formattedData;
       } else {
         alertDiv.className = "alert alert-danger";
       }

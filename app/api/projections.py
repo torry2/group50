@@ -115,29 +115,34 @@ def habits():
     except Exception:
         return jsonify({"status":"error","message":"Failed to Get User Data"}), 400
     
-
-    # habit: recurring transaction, xyz over budget amounts - monthly income?
     if not transactions:
-        return jsonify({"status": "error","message":"No Transactions"})
+        return jsonify({"status": "error","message":"No Transactions"}), 400
     
-    habits = []
-    not_habits = {}
+    nothabits = {"rent", "goal1", "goal2", "goal3", "utilities"}
+    purchases = set()
+    habits = {}
 
     for transaction in transactions:
-        category = transaction.category
-        amount = transaction.amount if transaction.amount is not None else 0
-        key = (category, amount)
-    if key in not_habits:
-        habits.append(transaction)
-    else:
-        not_habits[key] = transaction
-    
-    for trans in repeated_transactions:
-        print(f"Repeated Transaction - Category: {trans.category}, Amount: {trans.amount}")
-    
+        item = (transaction.category, transaction.amount)
+        
+        if transaction.category.lower() in nothabits:
+            continue 
 
-    return jsonify({
-        "status": "success",
-        "message": "notification",
-        "projections": "data"
-    }), 200
+        if item in purchases:
+            if item in habits:
+                habits[item] += 1
+            else:
+                habits[item] = 1
+        else:
+            purchases.add(item)
+
+    if habits:
+        total = 0
+        message = []
+        for (category, amount), count in habits.items():
+            total += amount * count
+            message.append(f"{category}: {amount} (x{count})\n")
+
+        return jsonify({"status": "success", "message": f"Additional Cost: ${total}", "projections": message}), 200
+
+    return jsonify({"status": "success", "message": "No Habits Identified"}), 200

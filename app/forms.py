@@ -21,4 +21,4 @@ class TransactionForm(FlaskForm):
     submit = SubmitField('Add')
 
 class ProjectionsForm(FlaskForm):
-    submit = SubmitField('Get Projections')
+    submit = SubmitField('Analyse')
