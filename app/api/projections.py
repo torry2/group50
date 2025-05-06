@@ -145,4 +145,4 @@ def habits():
 
         return jsonify({"status": "success", "message": f"Additional Cost: ${total}", "projections": message}), 200
 
-    return jsonify({"status": "success", "message": "No Habits Identified"}), 200
+    return jsonify({"status": "success", "message": "Additional Cost: $0", "projections":"No Habits Identified"}), 200
