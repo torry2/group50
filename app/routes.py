@@ -1,9 +1,16 @@
 from app import app
 from app.forms import *
-from flask import render_template , flash
+from flask import render_template, flash, redirect, url_for, send_file
 from flask_login import current_user, login_required
-from app.models import User 
+from app.models import User
 from app import login
+from app.api.data import data_routes
+# Import pie_chart from budget.py
+from app.api.budget import budget_routes, goals, pie_chart
+
+API_PREFIX = "/api"
+data_routes(app, API_PREFIX)  # transaction endpoints
+budget_routes(app, API_PREFIX)  # budget endpoints
 
 @login.unauthorized_handler
 def unauthorized():
@@ -19,7 +26,7 @@ def profile():
     sf = settingsform()
     return render_template('profile.html', form=sf)
 
-@app.route('/budget')
+@app.route('/budget', methods=['GET', 'HEAD'])
 @login_required
 def budget():
     return render_template('budget.html')
@@ -38,12 +45,8 @@ def projections():
     return render_template('projections.html', form=pf)
 
 @app.route('/login', methods=['GET', 'POST'])
-def login(): 
-    if current_user.is_authenticated: 
-        return redirect(url_for('data')) 
-    form = LoginForm() 
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('data'))
+    form = LoginForm()
     return render_template('login.html', title='Sign In', form=form)
- 
-
-
-
