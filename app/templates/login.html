@@ -40,6 +40,8 @@
   document.getElementById('auth-form').addEventListener('submit', function(event) {
     event.preventDefault();
 
+    document.querySelectorAll('.alert').forEach(n => n.remove());
+
     const formData = new FormData(this);
     const actionUrl = '/auth/login'; 
 
@@ -49,8 +51,15 @@
     })
     .then(response => response.json())
     .then(data => {
-      if (data.success) {
-        window.location.reload(); 
+      if (data.status === "success") {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger';
+        alertDiv.innerHTML = `<p>${data.message}</p>`;
+        document.querySelector('.login-box').prepend(alertDiv);
+
+        setTimeout(() => {
+          window.location.href = data.redirect_url;
+        }, data.delay);
       } else {
         const alertDiv = document.createElement('div');
         alertDiv.className = 'alert alert-danger';
@@ -62,6 +71,8 @@
   });
 
   document.getElementById('signup-button').addEventListener('click', function() {
+    document.querySelectorAll('.alert').forEach(n => n.remove());
+
     const formData = new FormData(document.getElementById('auth-form'));
     const actionUrl = '/auth/register'; 
 
@@ -71,8 +82,15 @@
     })
     .then(response => response.json())
     .then(data => {
-      if (data.success) {
-        window.location.reload();
+      if (data.status === "success") {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger';
+        alertDiv.innerHTML = `<p>${data.message}</p>`;
+        document.querySelector('.login-box').prepend(alertDiv);
+
+        setTimeout(() => {
+          window.location.href = data.redirect_url;
+        }, data.delay);
       } else {
         const alertDiv = document.createElement('div');
         alertDiv.className = 'alert alert-danger';

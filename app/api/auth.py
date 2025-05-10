@@ -38,7 +38,10 @@ def login():
 
     if user and user.check_password(password):
         login_user(user)
-        return jsonify({"status": "success", "message": "Logged in successfully."}), 200
+
+        redirect_to = url_for("data")
+
+        return jsonify({"status": "success", "message": "Logged in successfully. Redirecting.", "redirect_url": redirect_to, "delay": 3000}), 200
     else:
         return jsonify({"status": "error", "message": "Invalid username or password."}), 401
 
@@ -62,7 +65,11 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"status": "success", "message": "User registered successfully."}), 201
+    login_user(new_user)
+
+    redirect_to = url_for("data")
+
+    return jsonify({"status": "success", "message": "User registered successfully and logged in. Redirecting.", "redirect_url": redirect_to, "delay": 3000}), 201
 
 def update():
     if request.method != "POST":
