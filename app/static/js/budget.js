@@ -218,3 +218,34 @@ function updateGoalsDisplay(budget) {
             displayDefaultGoals(budget);
         });
 }
+
+function setupShareButtons() {
+    document.querySelectorAll('.share-button').forEach(button => {
+        // First remove the existing event listener
+        const buttonClone = button.cloneNode(true);
+        button.parentNode.replaceChild(buttonClone, button);
+        
+        // Add our new event listener
+        buttonClone.addEventListener('click', function() {
+            const goalId = this.getAttribute('data-goal-id');
+            shareGoal(goalId);
+        });
+    });
+}
+
+/**
+ * Share a specific goal
+ */
+function shareGoal(goalId) {
+    // Redirect to the share page with the goal ID in the query parameter
+    window.location.href = `/share?goal=${goalId}`;
+}
+
+// Override the existing alert-based event listeners after the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait for the original event handlers to be set up
+    setTimeout(function() {
+        // Replace the alert-based share buttons with our share page redirect
+        setupShareButtons();
+    }, 1000); // Wait 1 second to ensure the original code has run
+});
