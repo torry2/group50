@@ -201,7 +201,6 @@ function updateGoalsDisplay(budget) {
                     button.addEventListener('click', function() {
                         const goalId = this.getAttribute('data-goal-id');
                         const progress = this.getAttribute('data-progress');
-                        alert(`Sharing: I've reached ${progress}% of my savings goal #${goalId}!`);
                     });
                 });
             } else {
