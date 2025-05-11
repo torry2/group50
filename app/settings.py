@@ -1,5 +1,5 @@
 from flask import jsonify, request, redirect, url_for
-from app.forms import settingsform
+from app.forms import *
 from app import db
 from app.models import *
 from flask_login import current_user, logout_user
@@ -8,13 +8,13 @@ ENDPOINT = "settings"
 
 def settings_routes(app, prefix):
     app.add_url_rule(f"{prefix}/{ENDPOINT}", f"{prefix}/{ENDPOINT}", settings, methods=["GET"])
-    app.add_url_rule(f"{prefix}/{ENDPOINT}/delete", f"{prefix}/{ENDPOINT}/delete", delete_account, methods=["GET"])
+    app.add_url_rule(f"{prefix}/{ENDPOINT}/delete", f"{prefix}/{ENDPOINT}/delete", delete_account, methods=["POST"])
 
 def settings():
     return jsonify({"status": "settings"}), 200
 
 def delete_account():
-    sf = settingsform()
+    sf = deleteForm()
     if not sf.validate_on_submit():
         return jsonify({"status":"error","errors": sf.errors}), 400
     try:
