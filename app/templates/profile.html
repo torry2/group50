@@ -6,30 +6,105 @@
 {% block content %}
     <div>
         <h1>Profile</h1>
-        
+
         <h3>{{ username }}</h3>
-        
+
         <div id="account-settings">
-            <form method="POST" action="/api/settings" id="settings-form">
+            <form id="settings-form" method="POST" action="/auth/update">
                 {{ form.hidden_tag() }}
-                
+
                 <div>
-                    {{ form.new_password.label }}<br>
-                    {{ form.new_password(size=32) }}<br>
+                    {{ form.new_password.label }}
+
+                    {{ form.new_password(size=32) }}
+
                 </div>
-                
+
                 <div>
-                    {{ form.currency.label }}<br>
-                    {{ form.currency() }}<br>
+                    {{ form.currency.label }}
+
+                    {{ form.currency() }}
+
                 </div>
+
                 
-                <br>
-                {{ form.save() }}
+
+                <button type="submit" class="btn btn-dark">Save Changes</button>
             </form>
+            <div id="settingsNotification" style="margin-top: 20px;">
+                <!-- Notification messages for settings will be displayed here. -->
+            </div>
         </div>
 
-        <form method="POST" action="/" style="text-align: right;">
-            <button type="submit" onclick="return confirm('this feature does not exist yet');">Delete Account</button>
+        <form id="delete-form" method="POST" action="/api/settings/delete" style="text-align: right;">
+            {{ form.hidden_tag() }} 
+            <button type="submit" class="btn btn-danger">Delete Account</button>
         </form>
+        <div id="deleteNotification" style="margin-top: 20px;">
+            <!-- Notification messages for delete will be displayed here. -->
+        </div>
     </div>
+
+    <script>
+        // Handle settings form submission
+        document.getElementById('settings-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const notification = document.getElementById('settingsNotification');
+                notification.innerHTML = "";
+
+                const alertDiv = document.createElement('div');
+                if (data.status === "success") {
+                    alertDiv.className = "alert alert-success";
+                } else {
+                    alertDiv.className = "alert alert-danger";
+                }
+                alertDiv.innerHTML = data.message;
+                notification.appendChild(alertDiv);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        // Handle delete form submission
+        document.getElementById('delete-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+                fetch(form.action, {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const notification = document.getElementById('deleteNotification');
+                    notification.innerHTML = "";
+
+                    const alertDiv = document.createElement('div');
+                    if (data.status === "success") {
+                        alertDiv.className = "alert alert-success";
+                        alertDiv.innerHTML = data.message;
+                        // Optionally redirect or update the UI after successful deletion
+                        setTimeout(() => {
+                            window.location.href = '/'; // Redirect to home or login page
+                        }, 2000);
+                    } else {
+                        alertDiv.className = "alert alert-danger";
+                        alertDiv.innerHTML = data.message;
+                    }
+                    notification.appendChild(alertDiv);
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    </script>
 {% endblock %}

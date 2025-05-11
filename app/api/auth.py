@@ -79,17 +79,11 @@ def update():
         return jsonify({"status": "error", "message": "User not authenticated."}), 401
 
 
-    form = UpdateForm(request.form)
+    form = settingsform(request.form)
     if form.validate_on_submit():
-        new_username = form.username.data
-        new_password = form.password.data
+        new_password = form.new_password.data
     else:
         return jsonify({"status": "error", "message": "Invalid form data."}), 400
-
-    if new_username:
-        if User.query.filter_by(username=new_username).first():
-            return jsonify({"status": "error", "message": "Username already exists."}), 409
-        current_user.username = new_username
 
     if new_password:
         current_user.set_password(new_password)
