@@ -3,14 +3,27 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask import jsonify, request
 
-app = Flask(__name__)
-app.config.from_object(Config)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-login = LoginManager(app) #login.init_app(app)
+db = SQLAlchemy()
+migrate = Migrate()
+login = LoginManager() #login.init_app(app)
 
-from app import routes, models
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
+    
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login.init_app(app)
 
-from app.api import api_router
-api_router(app)
+    from app import models
+    
+    from app.api import api_router
+    api_router(app)
+
+    from app.blueprints import main
+    from app import routes
+    app.register_blueprint(main)
+
+    return app

@@ -39,7 +39,7 @@ def login():
     if user and user.check_password(password):
         login_user(user)
 
-        redirect_to = url_for("data")
+        redirect_to = url_for("main.data")
 
         return jsonify({"status": "success", "message": "Logged in successfully. Redirecting.", "redirect_url": redirect_to, "delay": 3000}), 200
     else:
@@ -67,7 +67,7 @@ def register():
 
     login_user(new_user)
 
-    redirect_to = url_for("data")
+    redirect_to = url_for("main.data")
 
     return jsonify({"status": "success", "message": "User registered successfully and logged in. Redirecting.", "redirect_url": redirect_to, "delay": 3000}), 201
 
