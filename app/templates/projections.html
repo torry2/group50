@@ -1,36 +1,59 @@
-{% extends 'base.html' %}
-
+{% extends "base.html" %}
 {% block title %}Projections{% endblock %}
 {% block page_title %}Projections{% endblock %}
 
+{% block css %}
+<link href="{{ url_for('static', filename='css/projections.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+{% endblock %}
+
 {% block content %}
-<div class="container py-4">
-  <div class="row">
-    <div class="col-md-6">
-      <h2>Expenditure</h2>
-      <img src="/api/projections/graph" alt="Projections" class="img-fluid">
+<div class="dashboard-wrapper">
+    <div class="bg-elements">
+        <div class="bg-circle circle-1"></div>
+        <div class="bg-circle circle-2"></div>
+        <div class="bg-circle circle-3"></div>
     </div>
-    <div class="col-md-6">
-      <h2>Habits</h2>
-      <form id="projectionsForm" method="POST">
-        {{ form.hidden_tag() }}
-        <div class="col-auto">
-          {{ form.submit(class="btn btn-dark", label="Get Projections") }}
-        </div>
-        <div id="habitsNote" style="margin-top: 10px; font-style: italic;">
-          <p>Habits identify when a transaction is made more than once; Totalling the extra spent (duplicate = same price+category)</p>
-        </div>
-      </form>
 
-      <div id="projectionsNotification" style="margin-top: 20px;">
-        <!-- Notification messages will be displayed here. -->
-      </div>
+    <div class="dashboard-glass">
+        <header class="dashboard-header animate__animated animate__fadeInDown">
+            <div class="header-content">
+                <h1>
+                    <span class="gradient-text">Projections Dashboard</span>
+                    <span class="subtitle">Analyze Your Spending Habits</span>
+                </h1>
+            </div>
+        </header>
 
-      <div id="projectionsData" style="margin-top: 20px; min-height: 100px;">
-        <!-- Projections data will be displayed here. -->
-      </div>
+        <main class="dashboard-main">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Expenditure</h2>
+                    <img src="/api/projections/graph" alt="Projections" class="img-fluid">
+                </div>
+                <div class="col-md-6">
+                    <h2>Habits</h2>
+                    <form id="projectionsForm" method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="col-auto">
+                            {{ form.submit(class="btn btn-dark", label="Get Projections") }}
+                        </div>
+                        <div id="habitsNote" style="margin-top: 10px; font-style: italic;">
+                            <p>Habits identify when a transaction is made more than once; Totalling the extra spent (duplicate = same price+category)</p>
+                        </div>
+                    </form>
+
+                    <div id="projectionsNotification" style="margin-top: 20px;">
+                        <!-- Notification messages will be displayed here. -->
+                    </div>
+
+                    <div id="projectionsData" style="margin-top: 20px; min-height: 100px;">
+                        <!-- Projections data will be displayed here. -->
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-  </div>
 </div>
 
 <script>
@@ -59,7 +82,7 @@
           for (const [category, amount] of Object.entries(projectionsData)) {
             formattedData += `<li>${category}: ${amount}</li>`;
           }
-        } else { // probably an xss somewhere here lol
+        } else {
           formattedData = `<li>${projectionsData}</li>`;
         }
         
