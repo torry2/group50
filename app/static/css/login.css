@@ -1,0 +1,280 @@
+/* CashNest - login.css */
+
+/* Inheriting main color scheme */
+:root {
+  /* Color palette based on main.css */
+  --dark-base: #1A1A19;
+  --deep-green: #31511E;
+  --medium-green: #4C772E;
+  --vibrant-accent: #859F3D;
+  --light-accent: #B1CC5E;
+  --cream-text: #F6FCDF;
+  --pure-white: #FFFFFF;
+  --glass-bg: rgba(26, 26, 25, 0.8);
+  --glass-border: rgba(133, 159, 61, 0.2);
+  
+  /* Additional system colors */
+  --hover-green: #56852A;
+  --error-red: #E63946;
+  --info-blue: #457B9D;
+}
+
+/* Login Page Background Elements */
+.login-container {
+  height: calc(100vh - 130px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 2rem;
+}
+
+/* Login Box Styling */
+.login-box {
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 24px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* Login Box Glow Effect */
+.login-box::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  z-index: -1;
+  background: linear-gradient(45deg, var(--deep-green), var(--vibrant-accent), var(--medium-green));
+  border-radius: 30px;
+  opacity: 0.4;
+  filter: blur(20px);
+}
+
+/* Title Styling */
+.box-title {
+  color: var(--pure-white);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.8rem;
+  text-align: center;
+  position: relative;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.box-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--vibrant-accent), var(--light-accent));
+  border-radius: 3px;
+}
+
+/* Form Elements */
+form {
+  margin-top: 2rem;
+}
+
+label {
+  display: block;
+  color: var(--cream-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  margin-top: 1.2rem;
+  letter-spacing: 0.5px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: rgba(26, 26, 25, 0.5);
+  color: var(--pure-white);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+  outline: none;
+  border-color: var(--vibrant-accent);
+  box-shadow: 0 0 0 2px rgba(133, 159, 61, 0.3);
+  background: rgba(26, 26, 25, 0.8);
+  color: var(--pure-white); /* Ensure text remains bright white when focused */
+}
+
+/* Buttons with improved styles */
+#login-button, 
+#signup-button {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 0.9rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+#login-button {
+  background: linear-gradient(135deg, var(--vibrant-accent), var(--deep-green));
+  border: none;
+  color: var(--pure-white);
+}
+
+#signup-button {
+  background: transparent;
+  border: 2px solid var(--vibrant-accent);
+  color: var(--vibrant-accent);
+  margin-top: 1rem;
+}
+
+/* Button highlight effects */
+#login-button::before,
+#signup-button::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+#login-button:hover::before,
+#signup-button:hover::before {
+  opacity: 1;
+  animation: pulse 2s infinite;
+}
+
+#login-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(49, 81, 30, 0.4);
+  background: linear-gradient(135deg, var(--light-accent), var(--medium-green));
+}
+
+#signup-button:hover {
+  transform: translateY(-3px);
+  background-color: rgba(133, 159, 61, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Alert Messages */
+.alert {
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.alert-danger {
+  background: rgba(230, 57, 70, 0.1);
+  border-left: 4px solid var(--error-red);
+  color: #f8d7da;
+}
+
+.alert-success {
+  background: rgba(76, 119, 46, 0.1);
+  border-left: 4px solid var(--vibrant-accent);
+  color: var(--light-accent);
+}
+
+.alert p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+  .login-box {
+    padding: 2rem;
+  }
+  
+  .box-title {
+    font-size: 1.8rem;
+  }
+  
+  input[type="text"],
+  input[type="password"],
+  input[type="email"] {
+    padding: 0.8rem 1rem;
+  }
+}
+
+/* Additional decorative background */
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(49, 81, 30, 0.1) 0%, rgba(26, 26, 25, 0) 70%);
+  z-index: -1;
+}
+
+/* Form field styles */
+input::placeholder {
+  color: rgba(246, 252, 223, 0.5); /* Semi-transparent cream */
+  transition: color 0.3s ease;
+}
+
+input:focus::placeholder {
+  color: var(--light-accent);
+  transition: color 0.3s ease;
+}
+
+/* Improve input text visibility */
+input {
+  caret-color: var(--vibrant-accent); /* Cursor color */
+  font-weight: 500; /* Slightly bolder text */
+  letter-spacing: 0.3px; /* Better letter spacing */
+}
