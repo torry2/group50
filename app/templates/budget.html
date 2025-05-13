@@ -2,49 +2,148 @@
 {% block title %}Savings + Budget{% endblock %}
 {% block page_title %}Savings + Budget{% endblock %}
 
+{% block css %}
+<link href="{{ url_for('static', filename='css/budget.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="dashboard-container bg-dark p-4 rounded">
-                <div class="row">
-                    <!-- Budget Section -->
-                    <div class="col-md-6">
-                        <div class="budget-section bg-light p-4 rounded">
-                            <div class="budget-header text-center mb-4">
-                                <h2>Budget: $<span id="total-budget">___</span></h2>
-                            </div>
-                            <div class="budget-chart text-center mb-4">
-                                <div id="pie-chart-container" style="position: relative; height: 300px;">
-                                    <canvas id="budget-pie-chart"></canvas>
-                                </div>
-                            </div>
-                            <div class="budget-categories" id="budget-categories">
-                                <!-- Categories will be populated by JavaScript -->
-                            </div>
+<div class="dashboard-wrapper">
+    <!-- Animated Background Elements -->
+    <div class="bg-elements">
+        <div class="bg-circle circle-1"></div>
+        <div class="bg-circle circle-2"></div>
+        <div class="bg-circle circle-3"></div>
+    </div>
+
+    <div class="dashboard-glass">
+        <!-- Header with Interactive Budget -->
+        <header class="dashboard-header animate__animated animate__fadeInDown">
+            <div class="header-content">
+                <h1>
+                    <span class="gradient-text">Budget Dashboard</span>
+                    <span class="subtitle">Track & Optimize Your Money</span>
+                </h1>
+                <div class="budget-display interactive-budget">
+                    <div class="budget-rings">
+                        <svg class="budget-ring" width="100" height="100">
+                            <circle class="ring-bg" cx="50" cy="50" r="40"></circle>
+                            <circle class="ring-progress" cx="50" cy="50" r="40" 
+                                    style="stroke-dashoffset: calc(251 - (251 * 0.75))"></circle>
+                        </svg>
+                    </div>
+                    <div class="budget-text">
+                        <div class="amount">$<span id="total-budget">5,250</span></div>
+                        <div class="label">Available Balance</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Content -->
+        <main class="dashboard-main">
+            <!-- Chart Section with Tabs -->
+            <section class="chart-section">
+                <div class="section-header">
+                    <h2>Financial Overview</h2>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="budget-pie-chart"></canvas>
+                    
+                    <!-- Financial Wisdom Boxes -->
+                    <div class="summary-boxes">
+                        <div class="summary-box">
+                            <div class="finance-icon">💹</div>
+                            <h3 class="summary-title">"Invest in Yourself"</h3>
+                            <p class="summary-text">The best return comes from personal growth</p>
+                            <p class="summary-detail">Education, skills & mindset matter</p>
+                            <span class="summary-trend">🌟 Tip #1</span>
+                        </div>
+                        <div class="summary-box">
+                            <div class="finance-icon">💰</div>
+                            <h3 class="summary-title">"Save Before You Spend"</h3>
+                            <p class="summary-text">Treat saving as a fixed expense</p>
+                            <p class="summary-detail">Pay yourself first every month</p>
+                            <span class="summary-trend">🌟 Tip #2</span>
                         </div>
                     </div>
-                    <!-- Goals Section -->
-                    <div class="col-md-6">
-                        <div class="goals-section bg-light p-4 rounded">
-                            <div class="goals-header text-center mb-4">
-                                <h2>Saving Goals:</h2>
+                </div>
+            </section>
+
+            <!-- Combined Data Cards -->
+            <div class="data-grid">
+                <!-- Categories Card -->
+                <div class="data-card animate__animated animate__fadeInLeft">
+                    <div class="card-header">
+                        <h3>
+                            <span class="icon">📊</span>
+                            Budget Categories
+                        </h3>
+                        <button class="card-action">View All</button>
+                    </div>
+                    <div class="categories-list" id="budget-categories">
+                        <!-- Dynamic content -->
+                        <div class="category-item">
+                            <div class="category-info">
+                                <span class="category-name">Housing</span>
+                                <span class="category-amount">$1,200/$1,500</span>
                             </div>
-                            <div class="goals-container" id="goals-container">
-                                <!-- Goals will be populated by JavaScript -->
+                            <div class="progress-bar" style="--progress: 80%"></div>
+                        </div>
+                        <div class="category-item">
+                            <div class="category-info">
+                                <span class="category-name">Food</span>
+                                <span class="category-amount">$350/$500</span>
                             </div>
+                            <div class="progress-bar" style="--progress: 70%"></div>
+                        </div>
+                        <div class="category-item">
+                            <div class="category-info">
+                                <span class="category-name">Transport</span>
+                                <span class="category-amount">$180/$250</span>
+                            </div>
+                            <div class="progress-bar" style="--progress: 72%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Goals Card -->
+                <div class="data-card animate__animated animate__fadeInRight">
+                    <div class="card-header">
+                        <h3>
+                            <span class="icon">🎯</span>
+                            Saving Goals
+                        </h3>
+                        <button class="card-action">View All</button>
+                    </div>
+                    <div class="goals-list" id="goals-container">
+                        <!-- Dynamic content -->
+                        <div class="goal-item">
+                            <div class="goal-info">
+                                <span class="goal-name">Emergency Fund</span>
+                                <span class="goal-amount">$2,400/$5,000</span>
+                            </div>
+                            <div class="progress-bar" style="--progress: 48%"></div>
+                            <div class="goal-date">Target: Dec 2023</div>
+                        </div>
+                        <div class="goal-item">
+                            <div class="goal-info">
+                                <span class="goal-name">Vacation</span>
+                                <span class="goal-amount">$800/$2,000</span>
+                            </div>
+                            <div class="progress-bar" style="--progress: 40%"></div>
+                            <div class="goal-date">Target: Mar 2024</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 </div>
 
-<!-- Include Chart.js for the pie chart -->
+<!-- Include Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script src="{{ url_for('static', filename='js/share.js') }}"></script>
-<!-- Include your external JavaScript file -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
 <script src="{{ url_for('static', filename='js/budget.js') }}"></script>
 {% endblock %}
