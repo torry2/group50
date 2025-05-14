@@ -7,6 +7,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
+from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.support import expected_conditions as EC
+
 CASHNEST = "http://127.0.0.1:5000"
 
 #GECKO = 
@@ -79,10 +82,60 @@ class test1:
         self.driver.get(f"{CASHNEST}/auth/logout")
         input()
 
-if __name__ == __name__:
+class TestBudgetTransaction:
+    def __init__(self, driver):
+        self.driver = driver
+
+        # Navigate to the data entry page and save income and budget amounts
+        self.driver.find_element(By.ID, "navbar-data").click()
+        self.driver.find_element(By.ID, "income-field").send_keys(25000)
+        fields = [
+            ("food_budget", 100),
+            ("rent_budget", 100),
+            ("utilities_budget", 100),
+            ("shopping_budget", 100),
+            ("entertainment_budget", 100),
+            ("other_budget", 100),
+            ("goal1_budget", 1000),
+            ("goal2_budget", 2500),
+            ("goal3_budget", 5000),
+        ]
+
+        for field_id, value in fields:
+            self.driver.find_element(By.ID, field_id).send_keys(value)
+
+        self.driver.find_element(By.ID, "income-budget-save-btn").click()
+
+        # Adds an entry to the transaction table and checks if it's actually added
+        self.driver.find_element(By.ID, "tx-name").send_keys("Uniqlo")
+        self.driver.find_element(By.ID, "tx-amount").send_keys("120")
+        Select(self.driver.find_element(By.ID, "tx-category")).select_by_visible_text("Shopping")
+        self.driver.find_element(By.ID, "tx-add-btn").click()
+        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, "//tr[td[text()='Uniqlo'] and td[text()='Shopping'] and td[text()='120.00']]")), message="Added transaction row not found in table")
+
+        # Refresh the website and wait for it to fully load before proceeding
+        self.driver.refresh()
+        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "income-field")))
+
+        # Checks if pressing delete on a transaction actually deletes it
+        self.driver.find_element(By.ID, "tx-delete-btn-1").click()
+        WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.XPATH, "//tr[td[text()='Uniqlo'] and td[text()='Shopping'] and td[text()='120.00']]")), message="Added transaction row still present after delete")
+
+        # Checks that the income and budgets set earlier persists after a reload
+        for fld_id, expected in fields:
+            el    = self.driver.find_element(By.ID, fld_id)
+            actual = int(el.get_attribute("value"))
+            assert actual == expected, f"{fld_id} was {actual}, expected {expected}"
+
+        # If the code gets here, the test is considered passed.
+        print("[TestBudgetTransaction] Test passed.")
+
+if __name__ == "__main__":
     test = test()
     username, password = test.login(test.driver) ; test.refresh(test.driver)
 
-    test1 = test1(test.driver)
+    # test1 = test1(test.driver)
+
+    TestBudgetTransaction(test.driver)
 
     test.quit()
