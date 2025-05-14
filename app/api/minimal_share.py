@@ -23,6 +23,11 @@ def share_budget_route():
             data = request.form
             username = data.get("username")
             message = data.get("message", "")
+
+            # xss hotfix
+            allowlist = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+            cleanmessage = ''.join(char for char in message if char in allowlist)
+            message = cleanmessage
             
             if not username:
                 return jsonify({"status": "error", "message": "Username is required"}), 400
