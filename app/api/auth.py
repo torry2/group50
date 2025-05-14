@@ -94,7 +94,6 @@ def update():
 
 def logout():
     if current_user.is_authenticated:
-        print("balls")
         logout_user()
         return jsonify({"status": "success", "message": "Logged out successfully."}), 200
     return jsonify({"status": "error", "message": "No user is currently logged in."}), 401
