@@ -19,7 +19,7 @@ def share_budget_route():
     
     elif request.method == "POST":
         try:
-            print("Processing POST request to /api/share")
+            
             data = request.form
             username = data.get("username")
             message = data.get("message", "")
@@ -61,9 +61,7 @@ def share_budget_route():
             }), 201
             
         except Exception as e:
-            import traceback
-            print(f"Error in share_budget POST: {str(e)}")
-            print(traceback.format_exc())
+            
             return jsonify({"status": "error", "message": str(e)}), 500
 
 def list_shares_route():
@@ -155,7 +153,4 @@ def view_shared_goal(share_id):
         }), 200
         
     except Exception as e:
-        import traceback
-        print(f"Error in view_shared_goal: {str(e)}")
-        print(traceback.format_exc())
         return jsonify({"status": "error", "message": str(e)}), 500
