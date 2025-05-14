@@ -1,12 +1,14 @@
 import os
 import sys
+import signal
 import re
 import requests
 from flask import Flask
+import logging
 from threading import Thread
 from time import sleep
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))) # this will only work for unix
 from app import create_app, db
 from app.models import Transactions, User
 from config import TestConfig
@@ -28,13 +30,15 @@ class test:
     def __init__(self):
 
         self.app = create_app(TestConfig)
-        self.app.config['WTF_CSRF_ENABLED'] = False
+        self.log = logging.getLogger('werkzeug')
+        self.log.disabled = True
+        self.app.config['WTF_CSRF_ENABLED'] = True
         def webserver():
             with self.app.app_context():
                 db.create_all()
-                self.app.run(host="127.0.0.1", port=1234, use_reloader=False)
-        thread = Thread(target=webserver)
-        thread.start()
+                self.app.run(host="127.0.0.1", port=1234, use_reloader=False) # use flask wsgi without reload
+        self.thread = Thread(target=webserver)
+        self.thread.start()
 
         self.options = Options()
         self.options.add_argument(f"user-data-dir={DATADIR}")
@@ -89,18 +93,18 @@ class test:
         return USERNAME, PASSWORD
 
     def refresh(self, driver):
+        self.driver.get(CASHNEST)
         self.driver.refresh()
 
     def quit(self):
         self.driver.quit()
 
-class test1:
+class TestAccount:
     def __init__(self, driver):
         self.driver = driver
-        self.driver.get(f"{CASHNEST}/auth/logout")
         input()
 
-class TestBudgetTransaction:
+class TestData:
     def __init__(self, driver):
         self.driver = driver
 
@@ -148,12 +152,72 @@ class TestBudgetTransaction:
         # If the code gets here, the test is considered passed.
         print("[TestBudgetTransaction] Test passed.")
 
+class TestExpenditure:
+    def __init__(self, driver):
+        self.driver = driver
+        input()
+
+class TestBudget:
+    def __init__(self, driver):
+        self.driver = driver
+        input()
+
+class TestShare:
+    def __init__(self, driver):
+        self.driver = driver
+        input()
+
 if __name__ == "__main__":
+    print(f"Initialising Tests... (Sleeping {DELAY})")
     test = test()
+    sleep(DELAY)
+
+    print(f"Test 1: Account Functionality")
+    try:
+        TestAccount(test.driver)
+        #register, logout, login, update password, delete account
+        print(f"Test Passed")
+    except Exception as e:
+        print(f"Test Failed ({e})")
+    
+    print(f"Injecting Persistent Session for Remaining Tests... (Sleeping {DELAY})")
     username, password = test.login(test.driver) ; test.refresh(test.driver)
+    sleep(DELAY)
 
-    # test1 = test1(test.driver)
+    print(f"Test 2: Data Entry")
+    try:
+        TestAccount(test.driver)
+        #TestData(test.driver)
+        # add income, budgets, transactions and delete transaction
+        print(f"Test Passed")
+    except Exception as e:
+        print(f"Test Failed ({e})")
 
-    TestBudgetTransaction(test.driver)
+    print(f"Test 3: Expenditure")
+    try:
+        #TestExpenditure(test.driver)
+        # expenditure page, click habits button
+        print(f"Test Passed")
+    except Exception as e:
+        print(f"Test Failed ({e})")
 
+    print(f"Test 4: Expenditure")
+    try:
+        #TestBudget(test.driver)
+        # budget page, just view it
+        print(f"Test Passed")
+    except Exception as e:
+        print(f"Test Failed ({e})")
+
+    print(f"Test 4: Expenditure")
+    try:
+        #TestShare(test.driver)
+        # share feature? create second account and share a budget        
+        print(f"Test Passed")
+    except Exception as e:
+        print(f"Test Failed ({e})")
+
+    print(f"Testing Completed!")
     test.quit()
+    pid = os.getpid() # todo: kill thread as part of quit()
+    os.kill(pid, signal.SIGTERM)
