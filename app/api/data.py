@@ -65,7 +65,6 @@ def set_inc_budget():
         return jsonify({"status":"error","errors": form.errors}), 400
 
     income = form.income.data
-    currency = form.currency.data
     food_budget = form.food_budget.data
     rent_budget = form.rent_budget.data
     utilities_budget = form.utilities_budget.data
@@ -76,18 +75,18 @@ def set_inc_budget():
     goal2_budget = form.goal2_budget.data
     goal3_budget = form.goal3_budget.data
 
-    if None in (income, currency, food_budget, rent_budget, utilities_budget, shopping_budget, entertainment_budget, other_budget, goal1_budget, goal2_budget, goal3_budget):
+    if None in (income, food_budget, rent_budget, utilities_budget, shopping_budget, entertainment_budget, other_budget, goal1_budget, goal2_budget, goal3_budget):
         return jsonify({"status":"error","message":"Missing required fields."}), 400
 
     inc_budget = Financials.query.filter_by(userid=current_user.id).first()
     if not inc_budget:
-        inc_budget = Financials(userid=current_user.id, income=income, currency=currency, food=food_budget, rent=rent_budget, utilities=utilities_budget, shopping=shopping_budget, entertainment=entertainment_budget, other=other_budget, goal1=goal1_budget, goal2=goal2_budget, goal3=goal3_budget)
+        inc_budget = Financials(userid=current_user.id, income=income, currency="AUD", food=food_budget, rent=rent_budget, utilities=utilities_budget, shopping=shopping_budget, entertainment=entertainment_budget, other=other_budget, goal1=goal1_budget, goal2=goal2_budget, goal3=goal3_budget)
         db.session.add(inc_budget)
         db.session.commit()
         return jsonify({"status": "success", "message": "Income and budgets set."}), 200
     else:
         inc_budget.income = income
-        inc_budget.currency = currency
+        inc_budget.currency = "AUD"
         inc_budget.food = food_budget
         inc_budget.rent = rent_budget
         inc_budget.utilities = utilities_budget

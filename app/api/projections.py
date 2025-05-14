@@ -80,18 +80,17 @@ def graph():
                 x = range(len(filtered_categories))
 
                 fig, ax = plt.subplots()
-                bars_actual = ax.bar(x, actual_amounts, label='Spent', color='blue')
+                bars_actual = ax.bar(x, actual_amounts, label='Spent', color='green')
                 for i in range(len(filtered_categories)):
                     if actual_amounts[i] > budget_amounts[i]:
                         ax.bar(x[i], actual_amounts[i] - budget_amounts[i], bottom=budget_amounts[i], color='red', label='Over Budget' if 'Over Budget' not in ax.get_legend_handles_labels()[1] else "")
                     else:
-                        ax.bar(x[i], budget_amounts[i] - actual_amounts[i], bottom=actual_amounts[i], color='green', label='Under Budget' if 'Under Budget' not in ax.get_legend_handles_labels()[1] else "")
+                        ax.bar(x[i], budget_amounts[i] - actual_amounts[i], bottom=actual_amounts[i], color='blue', label='Under Budget' if 'Under Budget' not in ax.get_legend_handles_labels()[1] else "")
 
                 ax.set_ylabel('$')
                 ax.set_title('Category Expenditure vs Budget')
                 ax.set_xticks(x)
-                ax.set_xticklabels(filtered_categories)
-
+                ax.set_xticklabels(filtered_categories)                
                 handles, labels = ax.get_legend_handles_labels()
                 unique_labels = dict(zip(labels, handles))  
                 ax.legend(unique_labels.values(), unique_labels.keys())
