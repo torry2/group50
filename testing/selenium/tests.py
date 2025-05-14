@@ -3,6 +3,7 @@ import sys
 import signal
 import re
 import requests
+import random
 from flask import Flask
 import logging
 from threading import Thread
@@ -14,8 +15,13 @@ from app.models import Transactions, User
 from config import TestConfig
 
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
@@ -23,12 +29,24 @@ from selenium.webdriver.support import expected_conditions as EC
 CASHNEST = "http://127.0.0.1:1234"
 
 #GECKO = 
-DELAY = 7 # time in seconds to delay actions
-DATADIR = os.path.join(os.getcwd(), 'data')
+DELAY = 0.7 # time in seconds to delay steps
+#DATADIR = os.path.join(os.getcwd(), 'data')
 
 class test:
-    def __init__(self):
+    def __init__(self, private):
+        
+        self.options = Options()
+        if private:
+            self.options.add_argument(f"--incognito")
+        #self.options.add_argument(f"user-data-dir={DATADIR}")
+        self.driver = webdriver.Chrome(options=self.options)
 
+        try:
+            self.driver.set_window_size(1920, 1080) # average monitor size, probably ok        
+        except Exception as e:
+            print(f"{e}")
+
+    def startapp(self):
         self.app = create_app(TestConfig)
         self.log = logging.getLogger('werkzeug')
         self.log.disabled = True
@@ -40,14 +58,8 @@ class test:
         self.thread = Thread(target=webserver)
         self.thread.start()
 
-        self.options = Options()
-        self.options.add_argument(f"user-data-dir={DATADIR}")
-        self.driver = webdriver.Chrome(options=self.options)
-
-        try:
-            self.driver.get(CASHNEST)
-        except Exception as e:
-            print(f"Cashnest Not Running ({CASHNEST})")
+    def logout(self, driver):
+        self.driver.get(f"{CASHNEST}/auth/logout")
 
     def login(self, driver):
         USERNAME = os.urandom(16).hex()
@@ -102,122 +114,239 @@ class test:
 class TestAccount:
     def __init__(self, driver):
         self.driver = driver
-        input()
 
+        test_username = os.urandom(8).hex()
+        test_password = os.urandom(8).hex()
+        test_newpassword = os.urandom(8).hex()
+
+        self.driver.find_element(By.ID, "userDropdown").click() ; sleep(DELAY)
+        self.driver.find_element(By.LINK_TEXT, "Login").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "username").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "username").send_keys(test_username) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "password").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "password").send_keys(test_password) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "signup-button").click() ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, ".fa-user-circle").click() ; sleep(DELAY)
+        self.driver.find_element(By.LINK_TEXT, "Settings").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "new_password").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "new_password").send_keys(test_newpassword) ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, ".btn-dark").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "userDropdown").click() ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, "li:nth-child(2) > .dropdown-item").click() ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, ".fa-user-circle").click() ; sleep(DELAY)
+        self.driver.find_element(By.LINK_TEXT, "Login").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "username").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "username").send_keys(test_username) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "password").send_keys(test_newpassword) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "login-button").click() ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, ".fa-user-circle").click() ; sleep(DELAY)
+        self.driver.find_element(By.LINK_TEXT, "Settings").click() ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, ".btn-danger").click() ; sleep(DELAY)
+        assert self.driver.switch_to.alert.text == "Are you sure you want to delete your account? This action cannot be undone." ; sleep(DELAY)
+        self.driver.switch_to.alert.accept() ; sleep(DELAY)
+ 
 class TestData:
     def __init__(self, driver):
         self.driver = driver
 
-        # Navigate to the data entry page and save income and budget amounts
-        self.driver.find_element(By.ID, "navbar-data").click()
-        self.driver.find_element(By.ID, "income-field").send_keys(25000)
-        fields = [
-            ("food_budget", 100),
-            ("rent_budget", 100),
-            ("utilities_budget", 100),
-            ("shopping_budget", 100),
-            ("entertainment_budget", 100),
-            ("other_budget", 100),
-            ("goal1_budget", 1000),
-            ("goal2_budget", 2500),
-            ("goal3_budget", 5000),
-        ]
+        test_income = random.randint(1, 100000)
 
-        for field_id, value in fields:
-            self.driver.find_element(By.ID, field_id).send_keys(value)
+        test_food_budget = random.randint(1, 10000)
+        test_rent_budget = random.randint(1, 10000)
+        test_utilities_budget = random.randint(1, 10000)
+        test_shopping_budget = random.randint(1, 10000)
+        test_entertainment_budget = random.randint(1, 10000)
+        test_other_budget = random.randint(1, 10000)
+        test_goal1_budget = random.randint(1, 10000)
+        test_goal2_budget = random.randint(1, 10000)
+        test_goal3_budget = random.randint(1, 10000)
 
-        self.driver.find_element(By.ID, "income-budget-save-btn").click()
+        test_transaction0_name = os.urandom(8).hex()
+        test_transaction0_amount = random.randint(1, 1000)
 
-        # Adds an entry to the transaction table and checks if it's actually added
-        self.driver.find_element(By.ID, "tx-name").send_keys("Uniqlo")
-        self.driver.find_element(By.ID, "tx-amount").send_keys("120")
-        Select(self.driver.find_element(By.ID, "tx-category")).select_by_visible_text("Shopping")
-        self.driver.find_element(By.ID, "tx-add-btn").click()
-        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, "//tr[td[text()='Uniqlo'] and td[text()='Shopping'] and td[text()='120.00']]")), message="Added transaction row not found in table")
+        test_transaction1_name = os.urandom(8).hex()
+        test_transaction1_amount = random.randint(1, 1000)
 
-        # Refresh the website and wait for it to fully load before proceeding
-        self.driver.refresh()
-        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, "income-field")))
+        test_transaction2_name = os.urandom(8).hex()
+        test_transaction2_amount = random.randint(1, 1000)
 
-        # Checks if pressing delete on a transaction actually deletes it
-        self.driver.find_element(By.ID, "tx-delete-btn-1").click()
-        WebDriverWait(self.driver, 10).until(EC.invisibility_of_element_located((By.XPATH, "//tr[td[text()='Uniqlo'] and td[text()='Shopping'] and td[text()='120.00']]")), message="Added transaction row still present after delete")
-
-        # Checks that the income and budgets set earlier persists after a reload
-        for fld_id, expected in fields:
-            el    = self.driver.find_element(By.ID, fld_id)
-            actual = int(el.get_attribute("value"))
-            assert actual == expected, f"{fld_id} was {actual}, expected {expected}"
-
-        # If the code gets here, the test is considered passed.
-        print("[TestBudgetTransaction] Test passed.")
+        self.driver.find_element(By.LINK_TEXT, "Data").click() ; sleep(DELAY)
+        element = self.driver.find_element(By.ID, "income") ; sleep(DELAY)
+        actions = ActionChains(self.driver) ; sleep(DELAY)
+        actions.move_to_element(element).click_and_hold().perform() ; sleep(DELAY)
+        element = self.driver.find_element(By.ID, "income") ; sleep(DELAY)
+        actions = ActionChains(self.driver) ; sleep(DELAY)
+        actions.move_to_element(element).perform() ; sleep(DELAY)
+        element = self.driver.find_element(By.ID, "income") ; sleep(DELAY)
+        actions = ActionChains(self.driver) ; sleep(DELAY)
+        actions.move_to_element(element).release().perform() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "income").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "income").send_keys(test_income) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "food_budget").send_keys(test_food_budget) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "rent_budget").send_keys(test_rent_budget) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "utilities_budget").send_keys(test_utilities_budget) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "shopping_budget").send_keys(test_shopping_budget) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "entertainment_budget").send_keys(test_entertainment_budget) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "other_budget").send_keys(test_other_budget) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "goal1_budget").send_keys(test_goal1_budget) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "goal2_budget").send_keys(test_goal2_budget) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "goal3_budget").send_keys(test_goal3_budget) ; sleep(DELAY)
+        driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(By.ID, "submit")) ; sleep(DELAY)
+        self.driver.find_element(By.ID, "submit").click()
+        self.driver.find_element(By.ID, "name").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "name").send_keys(test_transaction0_name) ; sleep(DELAY)
+        dropdown = self.driver.find_element(By.ID, "category") ; sleep(DELAY)
+        dropdown.find_element(By.XPATH, "//option[. = 'Shopping']").click() ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, "option:nth-child(4)").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "amount").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "amount").send_keys(test_transaction0_amount) ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, ".col-auto > #submit").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "name").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "name").send_keys(test_transaction1_name) ; sleep(DELAY)
+        dropdown = self.driver.find_element(By.ID, "category") ; sleep(DELAY)
+        dropdown.find_element(By.XPATH, "//option[. = 'Goal 3']").click() ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, "option:nth-child(9)").click() ; sleep(DELAY)
+        element = self.driver.find_element(By.ID, "amount") ; sleep(DELAY)
+        actions = ActionChains(self.driver) ; sleep(DELAY)
+        actions.move_to_element(element).click_and_hold().perform() ; sleep(DELAY)
+        element = self.driver.find_element(By.ID, "amount") ; sleep(DELAY)
+        actions = ActionChains(self.driver) ; sleep(DELAY)
+        actions.move_to_element(element).perform() ; sleep(DELAY)
+        element = self.driver.find_element(By.ID, "amount") ; sleep(DELAY)
+        actions = ActionChains(self.driver) ; sleep(DELAY)
+        actions.move_to_element(element).release().perform() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "amount").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "amount").send_keys(test_transaction1_amount) ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, ".col-auto > #submit").click() ; sleep(DELAY)
+        element = self.driver.find_element(By.ID, "name") ; sleep(DELAY)
+        actions = ActionChains(self.driver) ; sleep(DELAY)
+        actions.move_to_element(element).click_and_hold().perform() ; sleep(DELAY)
+        element = self.driver.find_element(By.ID, "name") ; sleep(DELAY)
+        actions = ActionChains(self.driver) ; sleep(DELAY)
+        actions.move_to_element(element).perform() ; sleep(DELAY)
+        element = self.driver.find_element(By.ID, "name") ; sleep(DELAY)
+        actions = ActionChains(self.driver) ; sleep(DELAY)
+        actions.move_to_element(element).release().perform() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "name").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "name").send_keys(test_transaction1_name) ; sleep(DELAY)
+        dropdown = self.driver.find_element(By.ID, "category") ; sleep(DELAY)
+        dropdown.find_element(By.XPATH, "//option[. = 'Shopping']").click() ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, "option:nth-child(4)").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "amount").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "amount").send_keys(test_transaction2_amount) ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, ".col-auto > #submit").click() ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, ".col-auto > #submit").click() ; sleep(DELAY)
+        driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(By.CSS_SELECTOR, "tr:nth-child(4) .btn")) ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, "tr:nth-child(4) .btn").click() ; sleep(DELAY)
 
 class TestExpenditure:
     def __init__(self, driver):
         self.driver = driver
-        input()
+        self.driver.find_element(By.LINK_TEXT, "Tracking").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "submit").click() ; sleep(DELAY)
 
 class TestBudget:
     def __init__(self, driver):
         self.driver = driver
-        input()
+        self.driver.find_element(By.LINK_TEXT, "Budget").click() ; sleep(DELAY)
+        driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(By.CSS_SELECTOR, ".animate__fadeInLeft .card-action")) ; sleep(DELAY)
 
 class TestShare:
-    def __init__(self, driver):
+    def __init__(self, driver, shareuser):
         self.driver = driver
-        input()
+        
+        self.shareuser = shareuser
+        test_message = os.urandom(8).hex()
+        self.driver.refresh() ; sleep(DELAY)
 
+        self.driver.find_element(By.LINK_TEXT, "Budget").click() ; sleep(DELAY) ; sleep(5) # slow loading page
+        self.driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(By.CSS_SELECTOR, ".goal-container:nth-child(1) .share-button")) ; sleep(DELAY) ; sleep(5)
+        self.driver.find_element(By.CSS_SELECTOR, ".goal-container:nth-child(1) .share-button").click() ; sleep(DELAY); sleep(5)
+        self.driver.find_element(By.ID, "username").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "username").send_keys(self.shareuser) ; sleep(DELAY)
+        self.driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(By.ID, "message")) ; sleep(2)
+        self.driver.find_element(By.ID, "message").click() ; sleep(DELAY)
+        self.driver.find_element(By.ID, "message").send_keys(test_message) ; sleep(DELAY)
+        self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click() ; sleep(DELAY)
+        element = self.driver.find_element(By.CSS_SELECTOR, ".btn-primary") ; sleep(DELAY)
+        actions = ActionChains(self.driver) ; sleep(DELAY)
+        actions.move_to_element(element).perform() ; sleep(DELAY)
+        element = self.driver.find_element(By.CSS_SELECTOR, "body") ; sleep(DELAY)
+        actions = ActionChains(self.driver) ; sleep(DELAY)
+        actions.move_to_element(element, 0, 0).perform() ; sleep(DELAY)
+        assert self.driver.switch_to.alert.text == f"Share successful: Saving goals shared with {self.shareuser} successfully!"
+
+class TestShareView: # this is part of the prior test, just the different user
+    def __init__(self, driver, shareuser):
+        self.driver = driver
+
+        self.driver.find_element(By.LINK_TEXT, "Budget").click() ; sleep(DELAY) ; sleep(5) # slow loading page
+        self.driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(By.CSS_SELECTOR, ".goal-container:nth-child(1) .share-button")) ; sleep(DELAY) ; sleep(5)
+        self.driver.find_element(By.CSS_SELECTOR, ".goal-container:nth-child(1) .share-button").click() ; sleep(DELAY); sleep(5)
+        self.driver.find_element(By.CSS_SELECTOR, ".btn-sm").click() ; sleep(DELAY)
+        self.driver.switch_to.alert.accept() # in case of error
+    
 if __name__ == "__main__":
-    print(f"Initialising Tests... (Sleeping {DELAY})")
-    test = test()
-    sleep(DELAY)
+    print(f"Initialising Tests... (Sleeping 7)")
+    user = test(False) ; user.startapp()
+    sleep(5)
+    user.refresh(user.driver) ; sleep(2)
 
     print(f"Test 1: Account Functionality")
     try:
-        TestAccount(test.driver)
-        #register, logout, login, update password, delete account
+        TestAccount(user.driver)
         print(f"Test Passed")
     except Exception as e:
         print(f"Test Failed ({e})")
     
-    print(f"Injecting Persistent Session for Remaining Tests... (Sleeping {DELAY})")
-    username, password = test.login(test.driver) ; test.refresh(test.driver)
-    sleep(DELAY)
+    print(f"Injecting Persistent Session for Remaining Tests... (Sleeping 5)")
+    username, password = user.login(user.driver) ; user.refresh(user.driver)
+    sleep(5)
 
     print(f"Test 2: Data Entry")
     try:
-        TestAccount(test.driver)
-        #TestData(test.driver)
-        # add income, budgets, transactions and delete transaction
-        print(f"Test Passed")
+        TestData(user.driver)
+        print(f"Test Passed (Sleeping 3)")
     except Exception as e:
         print(f"Test Failed ({e})")
+    user.refresh(user.driver); sleep(3)
 
     print(f"Test 3: Expenditure")
     try:
-        #TestExpenditure(test.driver)
-        # expenditure page, click habits button
-        print(f"Test Passed")
+        TestExpenditure(user.driver)
+        print(f"Test Passed (Sleeping 3)")
     except Exception as e:
         print(f"Test Failed ({e})")
+    user.refresh(user.driver); sleep(3)
 
-    print(f"Test 4: Expenditure")
+    print(f"Test 4: Budget")
     try:
-        #TestBudget(test.driver)
-        # budget page, just view it
-        print(f"Test Passed")
+        TestBudget(user.driver)
+        print(f"Test Passed (Sleeping 3)")
     except Exception as e:
         print(f"Test Failed ({e})")
+    user.refresh(user.driver); sleep(3)
+    
+    print(f"Test 5: Share")
+    
+    print(f"Creating Second User to Share (Sleeping 7)")
+    usershare = test(True) ; sleep(3)
+    usershare.refresh(usershare.driver) ; sleep(2) # document must be on domain to set cookie
+    username2, password2 = usershare.login(usershare.driver)
+    usershare.refresh(usershare.driver) # ; usershare.quit()
+    sleep(2)
+    
+    try:
+        TestShare(user.driver, username2)
+        print(f"Summoning Share User (Sleeping 30...)") ; sleep(30)
+        TestShareView(usershare.driver)
+        print(f"Test Passed (Sleeping 3)")
 
-    print(f"Test 4: Expenditure")
-    try:
-        #TestShare(test.driver)
-        # share feature? create second account and share a budget        
-        print(f"Test Passed")
     except Exception as e:
         print(f"Test Failed ({e})")
+    user.refresh(user.driver); sleep(3)
 
     print(f"Testing Completed!")
-    test.quit()
+    user.quit() ; usershare.quit()
     pid = os.getpid() # todo: kill thread as part of quit()
     os.kill(pid, signal.SIGTERM)
