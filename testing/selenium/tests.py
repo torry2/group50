@@ -1,7 +1,15 @@
 import os
+import sys
 import re
 import requests
+from flask import Flask
+from threading import Thread
 from time import sleep
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+from app import create_app, db
+from app.models import Transactions, User
+from config import TestConfig
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -10,7 +18,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 
-CASHNEST = "http://127.0.0.1:5000"
+CASHNEST = "http://127.0.0.1:1234"
 
 #GECKO = 
 DELAY = 7 # time in seconds to delay actions
@@ -18,6 +26,16 @@ DATADIR = os.path.join(os.getcwd(), 'data')
 
 class test:
     def __init__(self):
+
+        self.app = create_app(TestConfig)
+        self.app.config['WTF_CSRF_ENABLED'] = False
+        def webserver():
+            with self.app.app_context():
+                db.create_all()
+                self.app.run(host="127.0.0.1", port=1234, use_reloader=False)
+        thread = Thread(target=webserver)
+        thread.start()
+
         self.options = Options()
         self.options.add_argument(f"user-data-dir={DATADIR}")
         self.driver = webdriver.Chrome(options=self.options)
