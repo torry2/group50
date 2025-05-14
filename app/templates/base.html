@@ -49,10 +49,15 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="/profile"><i class="fas fa-cog me-2"></i>Settings</a></li>
-              <li><a class="dropdown-item" href="/login"><i class="fas fa-sign-in-alt me-2"></i>Login</a></li>
-              <li>
-                <button class="dropdown-item" onclick="fetch('/auth/logout', { method: 'GET' }).then(() => window.location.href = '/login');">
-                  <i class="fas fa-sign-out-alt me-2"></i>Logout
+              {% if current_user.is_authenticated %}
+                <li>
+                  <button class="dropdown-item" onclick="fetch('/auth/logout', { method: 'GET' }).then(() => window.location.href = '/');">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  </button>
+                </li>
+              {% else %}
+                <li><a class="dropdown-item" href="/login"><i class="fas fa-sign-in-alt me-2"></i>Login</a></li>
+              {% endif %}
                 </button>
               </li>
             </ul>

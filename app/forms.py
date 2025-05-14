@@ -27,7 +27,6 @@ class ProjectionsForm(FlaskForm):
 
 class IncomeBudgetForm(FlaskForm):
     income = DecimalField('Income', places=2, rounding=None, validators=[InputRequired(), NumberRange(min=Decimal('0.00'))])
-    currency = SelectField('Currency', choices=[('AUD', 'AUD'), ('USD', 'USD')], validators=[DataRequired()])
     food_budget = DecimalField('Food', places=2, rounding=None, validators=[InputRequired(), NumberRange(min=Decimal('0.00'))])
     rent_budget = DecimalField('Rent', places=2, rounding=None, validators=[InputRequired(), NumberRange(min=Decimal('0.00'))])
     utilities_budget = DecimalField('Utilities', places=2, rounding=None, validators=[InputRequired(), NumberRange(min=Decimal('0.00'))])
