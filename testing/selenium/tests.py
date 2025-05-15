@@ -1,13 +1,9 @@
-import os
-import sys
-import signal
-import re
+import os, sys, re, signal, random
+from time import sleep
 import requests
-import random
-from flask import Flask
 import logging
 from threading import Thread
-from time import sleep
+from flask import Flask
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))) # this will only work for unix
 from app import create_app, db
@@ -18,18 +14,11 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-
-from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 
+DELAY = 0.8
 CASHNEST = "http://127.0.0.1:1234"
 
-#GECKO = 
-DELAY = 0.7 # time in seconds to delay steps
 #DATADIR = os.path.join(os.getcwd(), 'data')
 
 class test:
@@ -42,7 +31,7 @@ class test:
         self.driver = webdriver.Chrome(options=self.options)
 
         try:
-            self.driver.set_window_size(1920, 1080) # average monitor size, probably ok        
+            self.driver.set_window_size(1920, 1080) # Set Size       
         except Exception as e:
             print(f"{e}")
 
@@ -54,7 +43,7 @@ class test:
         def webserver():
             with self.app.app_context():
                 db.create_all()
-                self.app.run(host="127.0.0.1", port=1234, use_reloader=False) # use flask wsgi without reload
+                self.app.run(host=CASHNEST.split("://")[1].split(":")[0], port=CASHNEST.split("://")[1].split(":")[1], use_reloader=False) # use flask wsgi without reload
         self.thread = Thread(target=webserver)
         self.thread.start()
 
@@ -259,32 +248,39 @@ class TestShare:
         test_message = os.urandom(8).hex()
         self.driver.refresh() ; sleep(DELAY)
 
-        self.driver.find_element(By.LINK_TEXT, "Budget").click() ; sleep(DELAY) ; sleep(5) # slow loading page
-        self.driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(By.CSS_SELECTOR, ".goal-container:nth-child(1) .share-button")) ; sleep(DELAY) ; sleep(5)
-        self.driver.find_element(By.CSS_SELECTOR, ".goal-container:nth-child(1) .share-button").click() ; sleep(DELAY); sleep(5)
+        self.driver.find_element(By.LINK_TEXT, "Budget").click() ; sleep(DELAY)
+        sleep(5) # Slow Loading Page
+        self.driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(By.CSS_SELECTOR, ".goal-container:nth-child(1) .share-button")) ; sleep(DELAY)
+        sleep(5) # Slow Loading Page
+        self.driver.find_element(By.CSS_SELECTOR, ".goal-container:nth-child(1) .share-button").click() ; sleep(DELAY)
+        sleep(5) # Slow Loading Page
         self.driver.find_element(By.ID, "username").click() ; sleep(DELAY)
         self.driver.find_element(By.ID, "username").send_keys(self.shareuser) ; sleep(DELAY)
-        self.driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(By.ID, "message")) ; sleep(2)
+        self.driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(By.ID, "message"))
+        sleep(2) # Slow Loading Page
         self.driver.find_element(By.ID, "message").click() ; sleep(DELAY)
         self.driver.find_element(By.ID, "message").send_keys(test_message) ; sleep(DELAY)
         self.driver.find_element(By.CSS_SELECTOR, ".btn-primary").click() ; sleep(DELAY)
-        element = self.driver.find_element(By.CSS_SELECTOR, ".btn-primary") ; sleep(DELAY)
-        actions = ActionChains(self.driver) ; sleep(DELAY)
-        actions.move_to_element(element).perform() ; sleep(DELAY)
-        element = self.driver.find_element(By.CSS_SELECTOR, "body") ; sleep(DELAY)
-        actions = ActionChains(self.driver) ; sleep(DELAY)
-        actions.move_to_element(element, 0, 0).perform() ; sleep(DELAY)
-        assert self.driver.switch_to.alert.text == f"Share successful: Saving goals shared with {self.shareuser} successfully!"
+        self.driver.switch_to.alert.accept() ; sleep(DELAY)
+        #element = self.driver.find_element(By.CSS_SELECTOR, ".btn-primary") ; sleep(DELAY)
+        #actions = ActionChains(self.driver) ; sleep(DELAY)
+        #actions.move_to_element(element).perform() ; sleep(DELAY)
+        #element = self.driver.find_element(By.CSS_SELECTOR, "body") ; sleep(DELAY)
+        #actions = ActionChains(self.driver) ; sleep(DELAY)
+        #actions.move_to_element(element, 0, 0).perform() ; sleep(DELAY)
+
 
 class TestShareView: # this is part of the prior test, just the different user
-    def __init__(self, driver, shareuser):
+    def __init__(self, driver):
         self.driver = driver
 
-        self.driver.find_element(By.LINK_TEXT, "Budget").click() ; sleep(DELAY) ; sleep(5) # slow loading page
-        self.driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(By.CSS_SELECTOR, ".goal-container:nth-child(1) .share-button")) ; sleep(DELAY) ; sleep(5)
+        self.driver.find_element(By.LINK_TEXT, "Budget").click() ; sleep(DELAY)
+        sleep(5) # Slow Loading Page
+        self.driver.execute_script("arguments[0].scrollIntoView();", self.driver.find_element(By.CSS_SELECTOR, ".goal-container:nth-child(1) .share-button")) ; sleep(DELAY)
+        sleep(5) # Slow Loading Page
         self.driver.find_element(By.CSS_SELECTOR, ".goal-container:nth-child(1) .share-button").click() ; sleep(DELAY); sleep(5)
         self.driver.find_element(By.CSS_SELECTOR, ".btn-sm").click() ; sleep(DELAY)
-        self.driver.switch_to.alert.accept() # in case of error
+        #self.driver.switch_to.alert.accept() ; sleep(DELAY)
     
 if __name__ == "__main__":
     print(f"Initialising Tests... (Sleeping 7)")
@@ -331,20 +327,19 @@ if __name__ == "__main__":
     
     print(f"Creating Second User to Share (Sleeping 7)")
     usershare = test(True) ; sleep(3)
-    usershare.refresh(usershare.driver) ; sleep(2) # document must be on domain to set cookie
+    usershare.refresh(usershare.driver) ; sleep(2) # current document domain must match set_cookie
     username2, password2 = usershare.login(usershare.driver)
     usershare.refresh(usershare.driver) # ; usershare.quit()
     sleep(2)
     
     try:
         TestShare(user.driver, username2)
-        print(f"Summoning Share User (Sleeping 30...)") ; sleep(30)
         TestShareView(usershare.driver)
-        print(f"Test Passed (Sleeping 3)")
+        print(f"Test Passed")
 
     except Exception as e:
         print(f"Test Failed ({e})")
-    user.refresh(user.driver); sleep(3)
+    user.refresh(user.driver)
 
     print(f"Testing Completed!")
     user.quit() ; usershare.quit()

@@ -49,20 +49,23 @@ source venv/Scripts/activate
 ```
 
 ### Testing
-The application includes unit testing and headless selenium testing, this is available in `/testing` and `/testing/selenium`.
+The application includes unit testing and Selenium testing, this is available in `/testing` and `/testing/selenium`.
 
 ##### Unit Tests
-To conduct unit tests ensure the dependencies are installed via venv as instructed by deployment, then use the python module `unittest` in the `/testing` directory.
+To conduct unit tests ensure the dependencies are installed via venv as instructed by deployment, then use the python module `unittest`.
 ```
-./venv/bin/python3 -m unittest
+./venv/bin/python3 -m unittest testing/tests.py
 ```
 
 ##### Selenium
 Our testing uses the Chrome webdriver, ensure Google Chrome is installed.
 - These tests are written only for Unix
+
 Use the Virutal Envionment from Deployment from prior:
 ```
+# Install Requirements
 ./venv/bin/pip install -r /testing/selenium/requirements.txt
+
+# Run Tests
 ./venv/bin/python3 testing/selenium/test.py
 ```
-- If the tests fail due to a slow browser, try increasing the `DELAY`
