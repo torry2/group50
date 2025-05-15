@@ -1,4 +1,4 @@
-# CITS3403 Semester 1 20225: Group Project
+# CITS3403 Semester 1 2025: Group Project
 
 Group Information: 50
 | Student ID | Name | Github |
@@ -49,20 +49,23 @@ source venv/Scripts/activate
 ```
 
 ### Testing
-The application includes unit testing and headless selenium testing, this is available in `/testing` and `/testing/selenium`.
+The application includes unit testing and Selenium testing, this is available in `/testing` and `/testing/selenium`.
 
 ##### Unit Tests
-To conduct unit tests ensure the dependencies are installed via venv as instructed by deployment, then use the python module `unittest` in the `/testing` directory.
+To conduct unit tests ensure the dependencies are installed via venv as instructed by deployment, then use the python module `unittest`.
 ```
-./venv/bin/python3 -m unittest
+./venv/bin/python3 -m unittest testing/tests.py
 ```
 
 ##### Selenium
-A few additional requirements exist for using selenium, refer to the documentation [here](https://www.selenium.dev/documentation/) for specific instruction.
-- Our testing uses the Chrome webdriver, ensure Google Chrome is installed
-- Install the requirements in `/testing/selenium/requirements.txt`
-- Deploy the application as per instructions above, modify the `CASHNEST` variable `test.py` file to the deployment
+Our testing uses the Chrome webdriver, ensure Google Chrome is installed.
+- These tests are written only for Unix
+
+Use the Virutal Envionment from Deployment from prior:
 ```
-python3 testing/selenium/test.py
+# Install Requirements
+./venv/bin/pip install -r /testing/selenium/requirements.txt
+
+# Run Tests
+./venv/bin/python3 testing/selenium/test.py
 ```
-The browser is headless by default, with success/fail status messages printed to console. Append an argument `SHOW` to show the browser.
